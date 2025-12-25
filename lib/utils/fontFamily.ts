@@ -8,3 +8,4 @@ export const getFontFamily = (
   const selectedFontFamily = fontFamilies.PLUS_JAKARTA_SANS;
   return selectedFontFamily[weight];
 };
+

@@ -1,4 +1,4 @@
-import { isIOS } from "@/app/utils/platformUtil";
+import { isIOS } from "@/lib/utils/platformUtil";
 
 export const fontFamilies = {
   PLUS_JAKARTA_SANS: {
@@ -7,3 +7,4 @@ export const fontFamilies = {
     bold: isIOS() ? "PlusJakartaSans-Bold" : "PlusJakartaSansBold",
   },
 };
+
