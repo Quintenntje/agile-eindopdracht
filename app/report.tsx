@@ -14,15 +14,23 @@ import {
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { ThemedText } from "../components/ThemedText";
+import { useAuth } from "../lib/contexts/AuthContext";
+import { supabase } from "../lib/utils/supabase";
 
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 
 export default function ReportScreen() {
+  const { user } = useAuth();
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<string | null>(null);
   const [loadingLocation, setLoadingLocation] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [coordinates, setCoordinates] = useState<{
+    lat: number;
+    long: number;
+  } | null>(null);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -39,6 +47,11 @@ export default function ReportScreen() {
       }
 
       let location = await Location.getCurrentPositionAsync({});
+      setCoordinates({
+        lat: location.coords.latitude,
+        long: location.coords.longitude,
+      });
+
       let reverseGeocode = await Location.reverseGeocodeAsync({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
@@ -48,8 +61,7 @@ export default function ReportScreen() {
         const addr = reverseGeocode[0];
         setAddress(`${addr.street} ${addr.streetNumber || ""}, ${addr.city}`);
       }
-    } catch (error) {
-      console.log(error);
+    } catch {
       Alert.alert("Error fetching location");
     } finally {
       setLoadingLocation(false);
@@ -68,8 +80,86 @@ export default function ReportScreen() {
       if (!result.canceled) {
         setImage(result.assets[0].uri);
       }
-    } catch (error) {
+    } catch {
       Alert.alert("Error taking picture");
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!user) {
+      Alert.alert("Error", "You must be logged in to submit a report");
+      return;
+    }
+
+    if (!image) {
+      Alert.alert("Error", "Please take a picture");
+      return;
+    }
+
+    if (!coordinates) {
+      Alert.alert("Error", "Please get your location");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("You must be logged in to submit a report");
+      }
+
+      let imageUrl = image;
+
+      if (image && image.startsWith("file://")) {
+        const fileExt = image.split(".").pop() || "jpg";
+        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+
+        const formData = new FormData();
+        formData.append("file", {
+          uri: image,
+          name: fileName,
+          type: "image/jpeg",
+        } as any);
+
+        const { error: uploadError } = await supabase.storage
+          .from("trash-images")
+          .upload(fileName, formData);
+
+        if (uploadError) {
+          throw uploadError;
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("trash-images").getPublicUrl(fileName);
+        imageUrl = publicUrl;
+      }
+
+      const { error } = await supabase.from("recorded_trash").insert({
+        user_id: user.id,
+        image: imageUrl,
+        lat: coordinates.lat,
+        long: coordinates.long,
+        description: description || null,
+        location_name: address || null,
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      Alert.alert("Success", "Report submitted successfully", [
+        {
+          text: "OK",
+          onPress: () => router.back(),
+        },
+      ]);
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to submit report");
+      setIsSubmitting(false);
     }
   };
 
@@ -154,7 +244,12 @@ export default function ReportScreen() {
       </ScrollView>
 
       <View className="p-4 border-t border-zinc-100 dark:border-zinc-800">
-        <Button label="Submit Report" onPress={() => router.back()} />
+        <Button
+          label="Submit Report"
+          onPress={handleSubmit}
+          isLoading={isSubmitting}
+          disabled={!image || !coordinates || !user}
+        />
       </View>
     </View>
   );

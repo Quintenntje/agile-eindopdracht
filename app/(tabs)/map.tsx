@@ -1,7 +1,7 @@
 import * as Location from "expo-location";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { Plus } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -12,28 +12,16 @@ import {
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import { Button } from "../../components/Button";
 import { ThemedText } from "../../components/ThemedText";
+import { supabase } from "../../lib/utils/supabase";
 
-// Dummy data for trash reports
-const DUMMY_REPORTS = [
-  {
-    id: 1,
-    title: "Overflowing Bin",
-    description: "Veldstraat 45",
-    coordinate: { latitude: 51.0543, longitude: 3.7174 },
-  },
-  {
-    id: 2,
-    title: "Plastic Waste",
-    description: "Korenmarkt",
-    coordinate: { latitude: 51.0549, longitude: 3.7223 },
-  },
-  {
-    id: 3,
-    title: "Discarded Electronics",
-    description: "Graslei",
-    coordinate: { latitude: 51.0536, longitude: 3.7198 },
-  },
-];
+type TrashReport = {
+  id: string;
+  description: string | null;
+  location_name: string | null;
+  lat: number;
+  long: number;
+  created_at: string;
+};
 
 export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(
@@ -41,6 +29,8 @@ export default function MapScreen() {
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [reports, setReports] = useState<TrashReport[]>([]);
+  const [loadingReports, setLoadingReports] = useState(true);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -58,6 +48,36 @@ export default function MapScreen() {
       setLoading(false);
     })();
   }, []);
+
+  const fetchReports = useCallback(async () => {
+    setLoadingReports(true);
+    try {
+      const { data, error } = await supabase
+        .from("recorded_trash")
+        .select("id, description, location_name, lat, long, created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      setReports(data || []);
+    } catch (error) {
+      console.error("Error fetching reports:", error);
+    } finally {
+      setLoadingReports(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchReports();
+  }, [fetchReports]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchReports();
+    }, [fetchReports])
+  );
 
   if (loading) {
     return (
@@ -97,21 +117,25 @@ export default function MapScreen() {
           longitudeDelta: 0.01,
         }}
       >
-        {DUMMY_REPORTS.map((report) => (
+        {reports.map((report) => (
           <Marker
             key={report.id}
-            coordinate={report.coordinate}
-            title={report.title}
-            description={report.description}
+            coordinate={{ latitude: Number(report.lat), longitude: Number(report.long) }}
+            title={report.location_name || "Trash Report"}
+            description={report.description || "No description"}
           />
         ))}
       </MapView>
 
       {/* Overlay for report count or status */}
       <View className="absolute top-12 left-4 right-4 bg-white/90 dark:bg-zinc-900/90 p-4 rounded-xl shadow-sm">
-        <ThemedText variant="subtitle" className="text-center">
-          {DUMMY_REPORTS.length} Reports Nearby
-        </ThemedText>
+        {loadingReports ? (
+          <ActivityIndicator size="small" color={isDark ? "#a1a1aa" : "#71717a"} />
+        ) : (
+          <ThemedText variant="subtitle" className="text-center">
+            {reports.length} Report{reports.length !== 1 ? "s" : ""} Nearby
+          </ThemedText>
+        )}
       </View>
 
       {/* Floating Action Button */}

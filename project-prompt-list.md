@@ -7,3 +7,6 @@ Based on @idea.md @.antigravity make a good looking navigation for the users mak
 Make me a login and register page, make input and button component for this, Make sure the input can hold an errord that will the show the validation message. With firstname, lastname, email, password fields for register, and email and password for login.
 
 Based on the login that you created make it functional by adding the created data to my supabase profiles, table and add the user to the auth, make the login then also functional after that.
+
+
+Make sure the reports actually get send to the database, the image needs to be stored in supabase storage and the data in the recorded_trash table.
