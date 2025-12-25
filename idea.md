@@ -1,0 +1,3 @@
+# Cleanup Ghent
+
+We are building a cleanup app for Ghent. That will allow user to make an picture of reported trash and than provide their location and it would Show that data on a map to show where the most trash is. To make it more fun we will add a gamification element to it. The user can earn points for reporting trash and can exchange those points for prizes in app or in real life. There wil also be an leaderboard to show the top users in the app with most points. There will also be challenges to do in the app to earn points. like weekly and daily challenges to keep the user active and motivated to use the app.
