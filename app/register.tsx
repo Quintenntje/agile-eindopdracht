@@ -1,11 +1,20 @@
 import { Link, router } from "expo-router";
-import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View,
+} from "react-native";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { ThemedText } from "../components/ThemedText";
+import { useAuth } from "../lib/contexts/AuthContext";
+import { supabase } from "../lib/utils/supabase";
 
 export default function RegisterScreen() {
+  const { session } = useAuth();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -13,13 +22,75 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRegister = async () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+  useEffect(() => {
+    if (session) {
       router.replace("/(tabs)");
-    }, 1500);
+    }
+  }, [session]);
+
+  const handleRegister = async () => {
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      Alert.alert("Error", "Passwords do not match");
+      return;
+    }
+
+    if (password.length < 6) {
+      Alert.alert("Error", "Password must be at least 6 characters");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Note: Email confirmation must be disabled in Supabase Dashboard:
+      // Go to Authentication > Providers > Email and disable "Confirm email"
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+          },
+        },
+      });
+
+      if (error) {
+        Alert.alert("Error", error.message);
+        setIsLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        // Wait a bit for the trigger to create the profile, then update if needed
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        // Update profile with first_name and last_name (fallback if trigger didn't set them)
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .update({
+            first_name: firstName,
+            last_name: lastName,
+          })
+          .eq("id", data.user.id);
+
+        if (profileError) {
+          console.error("Error updating profile:", profileError);
+          // Don't block registration if profile update fails
+          // The trigger should have already created it with the metadata
+        }
+      }
+
+      // Navigation will happen automatically via auth state change
+      router.replace("/(tabs)");
+    } catch (error) {
+      Alert.alert("Error", "An unexpected error occurred");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -42,7 +113,7 @@ export default function RegisterScreen() {
           </View>
 
           <View className="mb-6">
-            <View className="flex-row space-x-4 mb-0">
+            <View className="flex-row gap-4 mb-0">
               <View className="flex-1">
                 <Input
                   label="First Name"

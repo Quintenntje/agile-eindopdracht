@@ -43,9 +43,9 @@ const DEMO_CHALLENGES: ChallengeProps[] = [
 
 export default function ChallengesScreen() {
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-950">
+    <View className="flex-1 bg-white dark:bg-zinc-950 pt-2">
       <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <ThemedText variant="title" className="mb-2">
+        <ThemedText variant="title" className="mb-2 mt-8">
           Challenges
         </ThemedText>
         <ThemedText

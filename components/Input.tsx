@@ -20,7 +20,7 @@ export function Input({ label, error, className, ...rest }: InputProps) {
       <TextInput
         placeholderTextColor={isDark ? "#71717a" : "#a1a1aa"} // zinc-500 / zinc-400
         className={`
-            h-12 rounded-xl px-4 
+            h-14 rounded-2xl px-4 
             bg-zinc-50 dark:bg-zinc-900 
             border border-zinc-200 dark:border-zinc-800 
             text-zinc-900 dark:text-zinc-50 font-plus-jakarta-sans

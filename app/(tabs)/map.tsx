@@ -1,6 +1,14 @@
 import * as Location from "expo-location";
+import { router } from "expo-router";
+import { Plus } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import { Button } from "../../components/Button";
 import { ThemedText } from "../../components/ThemedText";
@@ -33,6 +41,8 @@ export default function MapScreen() {
   );
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   useEffect(() => {
     (async () => {
@@ -102,6 +112,17 @@ export default function MapScreen() {
         <ThemedText variant="subtitle" className="text-center">
           {DUMMY_REPORTS.length} Reports Nearby
         </ThemedText>
+      </View>
+
+      {/* Floating Action Button */}
+      <View className="absolute bottom-6 right-6">
+        <TouchableOpacity
+          className="w-16 h-16 bg-zinc-900 dark:bg-zinc-50 rounded-full items-center justify-center shadow-lg"
+          onPress={() => router.push("/report")}
+          activeOpacity={0.8}
+        >
+          <Plus size={32} color={isDark ? "#09090b" : "#ffffff"} />
+        </TouchableOpacity>
       </View>
     </View>
   );

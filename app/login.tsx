@@ -1,22 +1,55 @@
 import { Link, router } from "expo-router";
-import { useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View,
+} from "react-native";
 import { Button } from "../components/Button";
 import { Input } from "../components/Input";
 import { ThemedText } from "../components/ThemedText";
+import { useAuth } from "../lib/contexts/AuthContext";
+import { supabase } from "../lib/utils/supabase";
 
 export default function LoginScreen() {
+  const { session } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async () => {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+  useEffect(() => {
+    if (session) {
       router.replace("/(tabs)");
-    }, 1500);
+    }
+  }, [session]);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        Alert.alert("Error", error.message);
+        setIsLoading(false);
+        return;
+      }
+
+      // Navigation will happen automatically via auth state change
+      router.replace("/(tabs)");
+    } catch (error) {
+      Alert.alert("Error", "An unexpected error occurred");
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -54,13 +87,6 @@ export default function LoginScreen() {
               onChangeText={setPassword}
               secureTextEntry
             />
-            <View className="items-end mb-6">
-              <Link href="/(tabs)" asChild>
-                <ThemedText variant="link" className="text-sm">
-                  Forgot password?
-                </ThemedText>
-              </Link>
-            </View>
 
             <Button
               label="Sign In"

@@ -19,7 +19,8 @@ export function Button({
   disabled,
   ...rest
 }: ButtonProps) {
-  let baseStyles = "h-12 rounded-xl flex-row items-center justify-center px-4";
+  let baseStyles =
+    "h-14 rounded-full flex-row items-center justify-center px-6 shadow-sm";
   let textStyles = "text-base font-plus-jakarta-sans-medium";
 
   switch (variant) {
