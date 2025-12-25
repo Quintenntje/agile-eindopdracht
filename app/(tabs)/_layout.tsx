@@ -12,10 +12,27 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: isDark ? "#09090b" : "#ffffff", // zinc-950 / white
-          borderTopColor: isDark ? "#27272a" : "#e4e4e7", // zinc-800 / zinc-200
-          height: 60,
-          paddingBottom: 8,
-          paddingTop: 8,
+          borderTopColor: "transparent",
+          height: 64,
+          paddingBottom: 0, // Remove default safe area padding
+          position: "absolute",
+          bottom: 16,
+          left: 16, // Increasing spacing to make it visible (4px is very subtle)
+          right: 16,
+          borderRadius: 32,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 4,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 10,
+          elevation: 5,
+        },
+        tabBarItemStyle: {
+          justifyContent: "center",
+          alignItems: "center",
+          paddingVertical: 0,
         },
         tabBarActiveTintColor: isDark ? "#fafafa" : "#18181b", // zinc-50 / zinc-900
         tabBarInactiveTintColor: isDark ? "#71717a" : "#a1a1aa", // zinc-500 / zinc-400

@@ -115,7 +115,7 @@ export default function MapScreen() {
       </View>
 
       {/* Floating Action Button */}
-      <View className="absolute bottom-6 right-6">
+      <View className="absolute bottom-28 right-6">
         <TouchableOpacity
           className="w-16 h-16 bg-zinc-900 dark:bg-zinc-50 rounded-full items-center justify-center shadow-lg"
           onPress={() => router.push("/report")}

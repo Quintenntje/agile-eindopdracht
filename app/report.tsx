@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import { Camera, MapPin, X } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -26,9 +26,7 @@ export default function ReportScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  useEffect(() => {
-    getCurrentLocation();
-  }, []);
+  // Removed useEffect for automatic location fetching
 
   const getCurrentLocation = async () => {
     setLoadingLocation(true);
@@ -122,9 +120,13 @@ export default function ReportScreen() {
             value={address}
             onChangeText={setAddress}
             placeholder={loadingLocation ? "Locating..." : "Enter address"}
-            className="pl-10"
+            className="pl-12"
           />
-          <View className="absolute left-3 top-3.5">
+          <TouchableOpacity
+            onPress={getCurrentLocation}
+            className="absolute left-3 top-3.5 z-10 p-1"
+            disabled={loadingLocation}
+          >
             {loadingLocation ? (
               <ActivityIndicator
                 size="small"
@@ -133,7 +135,7 @@ export default function ReportScreen() {
             ) : (
               <MapPin size={20} color={isDark ? "#a1a1aa" : "#71717a"} />
             )}
-          </View>
+          </TouchableOpacity>
         </View>
 
         {/* Description */}
