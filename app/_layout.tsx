@@ -2,38 +2,52 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { View } from "react-native";
 import { AuthProvider, useAuth } from "../lib/contexts/AuthContext";
+import { ThemeProvider, useTheme } from "../lib/contexts/ThemeContext";
 import "./global.css";
 
 SplashScreen.preventAutoHideAsync();
 
-function RootLayoutNav() {
+// Wrapper component to access theme context
+function AppContent() {
   const { session, loading } = useAuth();
+  const { theme } = useTheme();
 
   if (loading) {
     return null;
   }
 
-  if (!session) {
-    return (
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="login" options={{ headerShown: false }} />
-        <Stack.Screen name="register" options={{ headerShown: false }} />
-      </Stack>
-    );
-  }
+  // Apply theme class to root view
+  const themeClass = theme === "default" ? "" : `theme-${theme}`;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="report"
-        options={{
-          presentation: "modal",
-          headerShown: false,
-        }}
-      />
-    </Stack>
+    <View style={{ flex: 1 }} className={themeClass}>
+      {!session ? (
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="login" options={{ headerShown: false }} />
+          <Stack.Screen name="register" options={{ headerShown: false }} />
+        </Stack>
+      ) : (
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="report"
+            options={{
+              presentation: "modal",
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="store"
+            options={{
+              presentation: "modal",
+              headerShown: false,
+            }}
+          />
+        </Stack>
+      )}
+    </View>
   );
 }
 
@@ -60,7 +74,9 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
     </AuthProvider>
   );
 }
