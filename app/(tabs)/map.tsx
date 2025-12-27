@@ -58,6 +58,7 @@ export default function MapScreen() {
       const { data, error } = await supabase
         .from("recorded_trash")
         .select("id, description, location_name, lat, long, created_at")
+        .eq("status", "verified")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -146,6 +147,7 @@ export default function MapScreen() {
           <ActivityIndicator
             size="small"
             color={isDark ? "#f2f9f6" : "#1a4d2e"}
+            color={isDark ? "#a1a1aa" : "#71717a"}
           />
         ) : (
           <ThemedText
