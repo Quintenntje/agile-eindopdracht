@@ -7,6 +7,15 @@ module.exports = {
   presets: [require("nativewind/preset")],
   theme: {
     extend: {
+      colors: {
+        theme: {
+          primary: "var(--color-primary)",
+          "primary-foreground": "var(--color-primary-fg)",
+          secondary: "var(--color-secondary)",
+          "secondary-foreground": "var(--color-secondary-fg)",
+          accent: "var(--color-accent)",
+        },
+      },
       fontFamily: {
         "plus-jakarta-sans": platformSelect({
           ios: "PlusJakartaSans-Regular",
