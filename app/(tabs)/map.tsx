@@ -55,6 +55,7 @@ export default function MapScreen() {
       const { data, error } = await supabase
         .from("recorded_trash")
         .select("id, description, location_name, lat, long, created_at")
+        .eq("status", "verified")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -120,7 +121,10 @@ export default function MapScreen() {
         {reports.map((report) => (
           <Marker
             key={report.id}
-            coordinate={{ latitude: Number(report.lat), longitude: Number(report.long) }}
+            coordinate={{
+              latitude: Number(report.lat),
+              longitude: Number(report.long),
+            }}
             title={report.location_name || "Trash Report"}
             description={report.description || "No description"}
           />
@@ -130,7 +134,10 @@ export default function MapScreen() {
       {/* Overlay for report count or status */}
       <View className="absolute top-12 left-4 right-4 bg-white/90 dark:bg-zinc-900/90 p-4 rounded-xl shadow-sm">
         {loadingReports ? (
-          <ActivityIndicator size="small" color={isDark ? "#a1a1aa" : "#71717a"} />
+          <ActivityIndicator
+            size="small"
+            color={isDark ? "#a1a1aa" : "#71717a"}
+          />
         ) : (
           <ThemedText variant="subtitle" className="text-center">
             {reports.length} Report{reports.length !== 1 ? "s" : ""} Nearby
