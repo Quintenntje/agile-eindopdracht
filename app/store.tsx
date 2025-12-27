@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { ThemedText } from "../components/ThemedText";
-import { useTheme } from "../lib/contexts/ThemeContext";
+import { getThemeClass, useTheme } from "../lib/contexts/ThemeContext";
 
 export default function StoreScreen() {
   const {
@@ -20,6 +20,9 @@ export default function StoreScreen() {
   } = useTheme();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  // Compute theme class (if currentTheme is default, no class; else theme-{currentTheme})
+  const themeClass = getThemeClass(currentTheme);
 
   const handlePurchase = async (themeId: any, price: number, name: string) => {
     if (price === 0) {
@@ -51,22 +54,26 @@ export default function StoreScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-950 pt-2">
-      <View className="p-4 flex-row justify-between items-center border-b border-zinc-100 dark:border-zinc-800 mt-8">
+    <View
+      className={`flex-1 bg-white dark:bg-theme-secondary pt-2 ${themeClass}`}
+    >
+      <View className="p-4 flex-row justify-between items-center border-b border-theme-secondary dark:border-theme-primary/10 mt-8">
         <View className="flex-row items-center gap-2">
-          <Palette size={24} color={isDark ? "#fafafa" : "#18181b"} />
-          <ThemedText variant="subtitle">Theme Store</ThemedText>
+          <Palette size={24} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+          <ThemedText variant="subtitle" className="text-theme-primary">
+            Theme Store
+          </ThemedText>
         </View>
         <TouchableOpacity
           onPress={() => router.back()}
-          className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-full"
+          className="p-2 bg-theme-secondary dark:bg-theme-primary/20 rounded-full"
         >
-          <X size={20} color={isDark ? "#e4e4e7" : "#52525b"} />
+          <X size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
         </TouchableOpacity>
       </View>
 
       <ScrollView className="flex-1 p-6">
-        <ThemedText className="mb-6 text-zinc-500 dark:text-zinc-400">
+        <ThemedText className="mb-6 text-theme-primary/70">
           Customize your app appearance. Earn points by cleaning up trash to
           unlock premium themes.
         </ThemedText>
@@ -93,8 +100,8 @@ export default function StoreScreen() {
                 }}
                 className={`flex-row items-center p-4 rounded-2xl border-2 ${
                   isActive
-                    ? "border-zinc-900 dark:border-zinc-50 bg-zinc-50 dark:bg-zinc-900"
-                    : "border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950"
+                    ? "border-theme-accent bg-theme-secondary/30 dark:bg-theme-primary/20"
+                    : "border-theme-secondary dark:border-theme-primary/10 bg-white dark:bg-theme-secondary"
                 }`}
               >
                 {/* Color Preview */}
@@ -106,20 +113,23 @@ export default function StoreScreen() {
                 </View>
 
                 <View className="flex-1">
-                  <ThemedText variant="subtitle" className="mb-1">
+                  <ThemedText
+                    variant="subtitle"
+                    className="mb-1 text-theme-primary"
+                  >
                     {themeOption.name}
                   </ThemedText>
 
                   {isPurchased ? (
-                    <ThemedText className="text-zinc-500 text-sm">
+                    <ThemedText className="text-theme-primary/60 text-sm">
                       {isActive ? "Active" : "Owned"}
                     </ThemedText>
                   ) : (
                     <View className="flex-row items-center">
-                      <ThemedText className="font-plus-jakarta-sans-bold text-amber-500 mr-1">
+                      <ThemedText className="font-plus-jakarta-sans-bold text-theme-accent mr-1">
                         {themeOption.price}
                       </ThemedText>
-                      <ThemedText className="text-zinc-400 text-xs">
+                      <ThemedText className="text-theme-primary/60 text-xs">
                         points
                       </ThemedText>
                     </View>
@@ -127,8 +137,8 @@ export default function StoreScreen() {
                 </View>
 
                 {!isPurchased && (
-                  <View className="bg-zinc-100 dark:bg-zinc-800 p-2 rounded-full">
-                    <Lock size={20} color={isDark ? "#a1a1aa" : "#71717a"} />
+                  <View className="bg-theme-secondary dark:bg-theme-primary/20 p-2 rounded-full">
+                    <Lock size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
                   </View>
                 )}
               </TouchableOpacity>

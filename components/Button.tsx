@@ -25,21 +25,21 @@ export function Button({
 
   switch (variant) {
     case "primary":
-      baseStyles += " bg-zinc-900 dark:bg-zinc-50";
-      textStyles += " text-white dark:text-zinc-900";
+      baseStyles += " bg-theme-primary dark:bg-theme-accent";
+      textStyles += " text-theme-primary-fg dark:text-zinc-900"; // Assuming accent is bright, text needs contrast
       break;
     case "secondary":
-      baseStyles += " bg-zinc-100 dark:bg-zinc-800";
-      textStyles += " text-zinc-900 dark:text-zinc-50";
+      baseStyles += " bg-theme-secondary dark:bg-theme-primary/20";
+      textStyles += " text-theme-primary";
       break;
     case "outline":
       baseStyles +=
-        " border border-zinc-200 dark:border-zinc-700 bg-transparent";
-      textStyles += " text-zinc-900 dark:text-zinc-50";
+        " border border-theme-secondary dark:border-theme-primary/20 bg-transparent";
+      textStyles += " text-theme-primary";
       break;
     case "ghost":
       baseStyles += " bg-transparent";
-      textStyles += " text-zinc-900 dark:text-zinc-50";
+      textStyles += " text-theme-primary";
       break;
   }
 
@@ -56,7 +56,7 @@ export function Button({
     >
       {isLoading ? (
         <ActivityIndicator
-          color={variant === "primary" ? "#ffffff" : "#71717a"} // Simplified color choice for loader
+          color={variant === "primary" ? "#ffffff" : "#1a4d2e"}
         />
       ) : (
         <Text className={textStyles}>{label}</Text>
