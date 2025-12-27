@@ -96,8 +96,38 @@ export default function ReportScreen() {
       return;
     }
 
-    if (!coordinates) {
-      Alert.alert("Error", "Please get your location");
+    // Try to resolve location from address if coordinates are missing
+    let finalCoordinates = coordinates;
+
+    if (!finalCoordinates && address) {
+      setIsSubmitting(true);
+      try {
+        const geocoded = await Location.geocodeAsync(address);
+        if (geocoded.length > 0) {
+          finalCoordinates = {
+            lat: geocoded[0].latitude,
+            long: geocoded[0].longitude,
+          };
+        } else {
+          Alert.alert(
+            "Error",
+            "Could not find location from address. Please try again or use current location."
+          );
+          setIsSubmitting(false);
+          return;
+        }
+      } catch (e) {
+        Alert.alert("Error", "Failed to resolve address location.");
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
+    if (!finalCoordinates) {
+      Alert.alert(
+        "Error",
+        "Please provide a location (address or current location)"
+      );
       return;
     }
 
@@ -141,8 +171,8 @@ export default function ReportScreen() {
       const { error } = await supabase.from("recorded_trash").insert({
         user_id: user.id,
         image: imageUrl,
-        lat: coordinates.lat,
-        long: coordinates.long,
+        lat: finalCoordinates.lat,
+        long: finalCoordinates.long,
         description: description || null,
         location_name: address || null,
       });
@@ -205,17 +235,23 @@ export default function ReportScreen() {
         <ThemedText variant="caption" className="mb-2 uppercase tracking-wider">
           Location
         </ThemedText>
-        <View className="mb-6 relative">
+        <View className="mb-6">
           <Input
             value={address}
-            onChangeText={setAddress}
-            placeholder={loadingLocation ? "Locating..." : "Enter address"}
-            className="pl-12"
+            onChangeText={(text) => {
+              setAddress(text);
+              // If user types, we should clear the 'current location' coordinates to ensure we re-geocode or rely on address
+              if (coordinates) setCoordinates(null);
+            }}
+            placeholder={
+              loadingLocation ? "Locating..." : "Leeuwstraat 1, Gent"
+            }
+            className="mb-3"
           />
           <TouchableOpacity
             onPress={getCurrentLocation}
-            className="absolute left-3 top-3.5 z-10 p-1"
             disabled={loadingLocation}
+            className="flex-row items-center justify-center bg-zinc-100 dark:bg-zinc-800 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700"
           >
             {loadingLocation ? (
               <ActivityIndicator
@@ -223,7 +259,12 @@ export default function ReportScreen() {
                 color={isDark ? "#a1a1aa" : "#71717a"}
               />
             ) : (
-              <MapPin size={20} color={isDark ? "#a1a1aa" : "#71717a"} />
+              <>
+                <MapPin size={18} color={isDark ? "#e4e4e7" : "#52525b"} />
+                <ThemedText className="ml-2 font-plus-jakarta-sans-medium text-zinc-700 dark:text-zinc-300">
+                  Use my current location
+                </ThemedText>
+              </>
             )}
           </TouchableOpacity>
         </View>
@@ -248,7 +289,7 @@ export default function ReportScreen() {
           label="Submit Report"
           onPress={handleSubmit}
           isLoading={isSubmitting}
-          disabled={!image || !coordinates || !user}
+          disabled={!image || (!coordinates && !address) || !user}
         />
       </View>
     </View>
