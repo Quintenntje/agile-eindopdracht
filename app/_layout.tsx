@@ -2,6 +2,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { vars } from "nativewind";
+import { useEffect } from "react";
 import { useColorScheme, View } from "react-native";
 import { AuthProvider, useAuth } from "../lib/contexts/AuthContext";
 import {
