@@ -4,12 +4,13 @@ import { Plus } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
   View,
 } from "react-native";
-import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Button } from "../../components/Button";
 import { ThemedText } from "../../components/ThemedText";
 import { getThemeClass, useTheme } from "../../lib/contexts/ThemeContext";
@@ -36,6 +37,7 @@ export default function MapScreen() {
   const isDark = colorScheme === "dark";
   const { theme } = useTheme();
   const themeClass = getThemeClass(theme);
+  const isWeb = Platform.OS === "web";
 
   useEffect(() => {
     (async () => {
@@ -115,38 +117,75 @@ export default function MapScreen() {
 
   return (
     <View className={`flex-1 ${themeClass}`}>
-      <MapView
-        style={StyleSheet.absoluteFill}
-        provider={PROVIDER_DEFAULT}
-        showsUserLocation
-        showsMyLocationButton
-        initialRegion={{
-          latitude: location?.coords.latitude || 51.0543,
-          longitude: location?.coords.longitude || 3.7174,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
-        // We could change userInterfaceStyle based on isDark, but standard map styling is separate.
-      >
-        {reports.map((report) => (
-          <Marker
-            key={report.id}
-            coordinate={{
-              latitude: Number(report.lat),
-              longitude: Number(report.long),
-            }}
-            title={report.location_name || "Trash Report"}
-            description={report.description || "No description"}
-          />
-        ))}
-      </MapView>
+      {isWeb ? (
+        <View className="flex-1 items-center justify-center bg-white dark:bg-theme-secondary">
+          <ThemedText variant="title" className="text-theme-primary mb-2">
+            Map Preview
+          </ThemedText>
+          <ThemedText className="text-theme-primary/70 text-center px-6">
+            Map view requires a native build. Please use the Expo Go app or
+            build the app to view the map.
+          </ThemedText>
+          <View className="mt-6 px-4">
+            <ThemedText variant="subtitle" className="text-theme-primary mb-2">
+              Reports Found: {reports.length}
+            </ThemedText>
+            {reports.length > 0 && (
+              <View className="mt-2">
+                {reports.slice(0, 5).map((report) => (
+                  <View
+                    key={report.id}
+                    className="mb-2 p-3 bg-theme-secondary dark:bg-theme-primary/20 rounded-lg"
+                  >
+                    <ThemedText className="font-semibold text-theme-primary">
+                      {report.location_name || "Trash Report"}
+                    </ThemedText>
+                    {report.description && (
+                      <ThemedText
+                        variant="caption"
+                        className="text-theme-primary/70 mt-1"
+                      >
+                        {report.description}
+                      </ThemedText>
+                    )}
+                  </View>
+                ))}
+              </View>
+            )}
+          </View>
+        </View>
+      ) : (
+        <MapView
+          style={StyleSheet.absoluteFill}
+          provider={PROVIDER_GOOGLE}
+          showsUserLocation
+          showsMyLocationButton
+          initialRegion={{
+            latitude: location?.coords.latitude || 51.0543,
+            longitude: location?.coords.longitude || 3.7174,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }}
+        >
+          {reports.map((report) => (
+            <Marker
+              key={report.id}
+              coordinate={{
+                latitude: Number(report.lat),
+                longitude: Number(report.long),
+              }}
+              title={report.location_name || "Trash Report"}
+              description={report.description || "No description"}
+            />
+          ))}
+        </MapView>
+      )}
 
       {/* Overlay for report count or status */}
       <View className="absolute top-12 left-4 right-4 bg-white/90 dark:bg-theme-secondary/90 p-4 rounded-xl shadow-sm border border-theme-secondary dark:border-theme-primary/10">
         {loadingReports ? (
           <ActivityIndicator
             size="small"
-            color={isDark ? "#f2f9f6" : "#1a4d2e"}
             color={isDark ? "#a1a1aa" : "#71717a"}
           />
         ) : (
