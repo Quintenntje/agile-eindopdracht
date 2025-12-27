@@ -19,9 +19,11 @@ import { supabase } from "../lib/utils/supabase";
 
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
+import { getThemeClass, useTheme } from "../lib/contexts/ThemeContext";
 
 export default function ReportScreen() {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<string | null>(null);
@@ -33,6 +35,8 @@ export default function ReportScreen() {
   } | null>(null);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  const themeClass = getThemeClass(theme);
 
   // Removed useEffect for automatic location fetching
 
@@ -116,7 +120,7 @@ export default function ReportScreen() {
           setIsSubmitting(false);
           return;
         }
-      } catch (e) {
+      } catch {
         Alert.alert("Error", "Failed to resolve address location.");
         setIsSubmitting(false);
         return;
@@ -194,26 +198,33 @@ export default function ReportScreen() {
   };
 
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-950 pt-2">
-      <View className="p-4 flex-row justify-between items-center border-b border-zinc-100 dark:border-zinc-800 mt-8">
-        <ThemedText variant="subtitle">New Report</ThemedText>
+    <View
+      className={`flex-1 bg-white dark:bg-theme-secondary pt-2 ${themeClass}`}
+    >
+      <View className="p-4 flex-row justify-between items-center border-b border-theme-secondary dark:border-theme-primary/10 mt-8">
+        <ThemedText variant="subtitle" className="text-theme-primary">
+          New Report
+        </ThemedText>
         <Pressable
           onPress={() => router.back()}
-          className="p-2 bg-zinc-100 dark:bg-zinc-800 rounded-full"
+          className="p-2 bg-theme-secondary dark:bg-theme-primary/10 rounded-full"
         >
-          <X size={20} color={isDark ? "#e4e4e7" : "#52525b"} />
+          <X size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
         </Pressable>
       </View>
 
       <ScrollView className="flex-1 p-6">
         {/* Picture Area */}
-        <ThemedText variant="caption" className="mb-2 uppercase tracking-wider">
+        <ThemedText
+          variant="caption"
+          className="mb-2 uppercase tracking-wider text-theme-primary/70"
+        >
           Evidence
         </ThemedText>
         <TouchableOpacity
           activeOpacity={0.8}
           onPress={pickImage}
-          className="w-full h-64 bg-zinc-100 dark:bg-zinc-900 rounded-2xl items-center justify-center border-2 border-dashed border-zinc-300 dark:border-zinc-700 mb-6 overflow-hidden"
+          className="w-full h-64 bg-theme-secondary/20 dark:bg-theme-primary/5 rounded-2xl items-center justify-center border-2 border-dashed border-theme-secondary dark:border-theme-primary/20 mb-6 overflow-hidden"
         >
           {image ? (
             <Image
@@ -223,8 +234,8 @@ export default function ReportScreen() {
             />
           ) : (
             <View className="items-center">
-              <Camera size={48} color={isDark ? "#52525b" : "#a1a1aa"} />
-              <ThemedText className="text-zinc-500 mt-2 font-plus-jakarta-sans-medium">
+              <Camera size={48} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+              <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium">
                 Tap to take picture
               </ThemedText>
             </View>
@@ -232,7 +243,10 @@ export default function ReportScreen() {
         </TouchableOpacity>
 
         {/* Location Area */}
-        <ThemedText variant="caption" className="mb-2 uppercase tracking-wider">
+        <ThemedText
+          variant="caption"
+          className="mb-2 uppercase tracking-wider text-theme-primary/70"
+        >
           Location
         </ThemedText>
         <View className="mb-6">
@@ -246,22 +260,22 @@ export default function ReportScreen() {
             placeholder={
               loadingLocation ? "Locating..." : "Leeuwstraat 1, Gent"
             }
-            className="mb-3"
+            className="mb-3 bg-theme-secondary/20 dark:bg-theme-primary/10 border-theme-secondary dark:border-theme-primary/10 text-theme-primary"
           />
           <TouchableOpacity
             onPress={getCurrentLocation}
             disabled={loadingLocation}
-            className="flex-row items-center justify-center bg-zinc-100 dark:bg-zinc-800 p-3 rounded-xl border border-zinc-200 dark:border-zinc-700"
+            className="flex-row items-center justify-center bg-theme-secondary dark:bg-theme-primary/20 p-3 rounded-xl border border-theme-secondary dark:border-theme-primary/10"
           >
             {loadingLocation ? (
               <ActivityIndicator
                 size="small"
-                color={isDark ? "#a1a1aa" : "#71717a"}
+                color={isDark ? "#f2f9f6" : "#1a4d2e"}
               />
             ) : (
               <>
-                <MapPin size={18} color={isDark ? "#e4e4e7" : "#52525b"} />
-                <ThemedText className="ml-2 font-plus-jakarta-sans-medium text-zinc-700 dark:text-zinc-300">
+                <MapPin size={18} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+                <ThemedText className="ml-2 font-plus-jakarta-sans-medium text-theme-primary">
                   Use my current location
                 </ThemedText>
               </>
@@ -270,7 +284,10 @@ export default function ReportScreen() {
         </View>
 
         {/* Description */}
-        <ThemedText variant="caption" className="mb-2 uppercase tracking-wider">
+        <ThemedText
+          variant="caption"
+          className="mb-2 uppercase tracking-wider text-theme-primary/70"
+        >
           Details
         </ThemedText>
         <Input
@@ -279,12 +296,12 @@ export default function ReportScreen() {
           placeholder="Describe the trash (optional)"
           multiline
           numberOfLines={3}
-          className="h-24 py-3 align-top"
+          className="h-24 py-3 align-top bg-theme-secondary/20 dark:bg-theme-primary/10 border-theme-secondary dark:border-theme-primary/10 text-theme-primary"
           style={{ textAlignVertical: "top" }}
         />
       </ScrollView>
 
-      <View className="p-4 border-t border-zinc-100 dark:border-zinc-800">
+      <View className="p-4 border-t border-theme-secondary dark:border-theme-primary/10">
         <Button
           label="Submit Report"
           onPress={handleSubmit}

@@ -4,20 +4,20 @@
 
 @layer base {
   :root {
-    /* DEFAULT (ZINC) */
-    --color-primary: #18181b; /* zinc-900 */
-    --color-primary-fg: #fafafa; /* zinc-50 */
-    --color-secondary: #f4f4f5; /* zinc-100 */
-    --color-secondary-fg: #18181b; /* zinc-900 */
-    --color-accent: #27272a; /* zinc-800 */
+    /* DEFAULT (ECO / FOREST THEME) */
+    --color-primary: #1a4d2e; /* Deep Forest Green */
+    --color-primary-fg: #f2f9f6; /* Mist White */
+    --color-secondary: #e8f3ee; /* Light Sage / Mint */
+    --color-secondary-fg: #1a2f2b; /* Dark Greenish Black */
+    --color-accent: #d4a373; /* Earthy Beige/Wood */
   }
 
   .dark:root {
-    --color-primary: #fafafa; /* zinc-50 */
-    --color-primary-fg: #18181b; /* zinc-900 */
-    --color-secondary: #27272a; /* zinc-800 */
-    --color-secondary-fg: #fafafa; /* zinc-50 */
-    --color-accent: #52525b; /* zinc-600 */
+    --color-primary: #f2f9f6; /* Mist White */
+    --color-primary-fg: #1a4d2e; /* Deep Forest Green */
+    --color-secondary: #1a2f2b; /* Dark Greenish Black */
+    --color-secondary-fg: #e8f3ee; /* Light Sage */
+    --color-accent: #4ade80; /* Bright Green */
   }
 
   /* OCEAN */

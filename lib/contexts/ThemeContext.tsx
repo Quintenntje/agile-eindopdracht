@@ -24,11 +24,95 @@ export const THEMES: {
   price: number;
   color: string;
 }[] = [
-  { id: "default", name: "Default Zinc", price: 0, color: "#18181b" },
+  { id: "default", name: "Eco Nature", price: 0, color: "#1a4d2e" },
   { id: "ocean", name: "Ocean Blue", price: 500, color: "#0e7490" },
   { id: "sunset", name: "Sunset Orange", price: 500, color: "#c2410c" },
   { id: "forest", name: "Forest Green", price: 500, color: "#15803d" },
 ];
+
+export const THEME_COLORS: Record<
+  ThemeOption,
+  { light: Record<string, string>; dark: Record<string, string> }
+> = {
+  default: {
+    light: {
+      "--color-primary": "#1a4d2e",
+      "--color-primary-fg": "#f2f9f6",
+      "--color-secondary": "#e8f3ee",
+      "--color-secondary-fg": "#1a2f2b",
+      "--color-accent": "#d4a373",
+    },
+    dark: {
+      "--color-primary": "#f2f9f6",
+      "--color-primary-fg": "#1a4d2e",
+      "--color-secondary": "#1a2f2b",
+      "--color-secondary-fg": "#e8f3ee",
+      "--color-accent": "#4ade80",
+    },
+  },
+  ocean: {
+    light: {
+      "--color-primary": "#0e7490",
+      "--color-primary-fg": "#ecfeff",
+      "--color-secondary": "#cffafe",
+      "--color-secondary-fg": "#155e75",
+      "--color-accent": "#0891b2",
+    },
+    dark: {
+      "--color-primary": "#67e8f9",
+      "--color-primary-fg": "#083344",
+      "--color-secondary": "#164e63",
+      "--color-secondary-fg": "#cffafe",
+      "--color-accent": "#22d3ee",
+    },
+  },
+  sunset: {
+    light: {
+      "--color-primary": "#ea580c",
+      "--color-primary-fg": "#fff7ed",
+      "--color-secondary": "#ffedd5",
+      "--color-secondary-fg": "#9a3412",
+      "--color-accent": "#f97316",
+    },
+    dark: {
+      "--color-primary": "#fdba74",
+      "--color-primary-fg": "#431407",
+      "--color-secondary": "#7c2d12",
+      "--color-secondary-fg": "#ffedd5",
+      "--color-accent": "#fb923c",
+    },
+  },
+  forest: {
+    light: {
+      "--color-primary": "#15803d",
+      "--color-primary-fg": "#f0fdf4",
+      "--color-secondary": "#dcfce7",
+      "--color-secondary-fg": "#14532d",
+      "--color-accent": "#16a34a",
+    },
+    dark: {
+      "--color-primary": "#86efac",
+      "--color-primary-fg": "#052e16",
+      "--color-secondary": "#14532d",
+      "--color-secondary-fg": "#dcfce7",
+      "--color-accent": "#4ade80",
+    },
+  },
+};
+
+export function getThemeClass(theme: ThemeOption) {
+  switch (theme) {
+    case "ocean":
+      return "theme-ocean";
+    case "sunset":
+      return "theme-sunset";
+    case "forest":
+      return "theme-forest";
+    case "default":
+    default:
+      return "";
+  }
+}
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeOption>("default");

@@ -12,6 +12,7 @@ import {
 import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps";
 import { Button } from "../../components/Button";
 import { ThemedText } from "../../components/ThemedText";
+import { getThemeClass, useTheme } from "../../lib/contexts/ThemeContext";
 import { supabase } from "../../lib/utils/supabase";
 
 type TrashReport = {
@@ -33,6 +34,8 @@ export default function MapScreen() {
   const [loadingReports, setLoadingReports] = useState(true);
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { theme } = useTheme();
+  const themeClass = getThemeClass(theme);
 
   useEffect(() => {
     (async () => {
@@ -82,30 +85,36 @@ export default function MapScreen() {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-zinc-950">
-        <ActivityIndicator
-          size="large"
-          className="color-zinc-900 dark:color-zinc-50"
-        />
-        <ThemedText className="mt-4">Locating...</ThemedText>
+      <View
+        className={`flex-1 items-center justify-center bg-white dark:bg-theme-secondary ${themeClass}`}
+      >
+        <ActivityIndicator size="large" className="color-theme-primary" />
+        <ThemedText className="mt-4 text-theme-primary">Locating...</ThemedText>
       </View>
     );
   }
 
   if (errorMsg) {
     return (
-      <View className="flex-1 items-center justify-center bg-white dark:bg-zinc-950 p-6">
-        <ThemedText variant="title" className="mb-2 text-center">
+      <View
+        className={`flex-1 items-center justify-center bg-white dark:bg-theme-secondary p-6 ${themeClass}`}
+      >
+        <ThemedText
+          variant="title"
+          className="mb-2 text-center text-theme-primary"
+        >
           Location Required
         </ThemedText>
-        <ThemedText className="text-center mb-4">{errorMsg}</ThemedText>
+        <ThemedText className="text-center mb-4 text-theme-primary">
+          {errorMsg}
+        </ThemedText>
         <Button label="Retry" onPress={() => setLoading(true)} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1">
+    <View className={`flex-1 ${themeClass}`}>
       <MapView
         style={StyleSheet.absoluteFill}
         provider={PROVIDER_DEFAULT}
@@ -117,6 +126,7 @@ export default function MapScreen() {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
+        // We could change userInterfaceStyle based on isDark, but standard map styling is separate.
       >
         {reports.map((report) => (
           <Marker
@@ -132,14 +142,18 @@ export default function MapScreen() {
       </MapView>
 
       {/* Overlay for report count or status */}
-      <View className="absolute top-12 left-4 right-4 bg-white/90 dark:bg-zinc-900/90 p-4 rounded-xl shadow-sm">
+      <View className="absolute top-12 left-4 right-4 bg-white/90 dark:bg-theme-secondary/90 p-4 rounded-xl shadow-sm border border-theme-secondary dark:border-theme-primary/10">
         {loadingReports ? (
           <ActivityIndicator
             size="small"
+            color={isDark ? "#f2f9f6" : "#1a4d2e"}
             color={isDark ? "#a1a1aa" : "#71717a"}
           />
         ) : (
-          <ThemedText variant="subtitle" className="text-center">
+          <ThemedText
+            variant="subtitle"
+            className="text-center text-theme-primary"
+          >
             {reports.length} Report{reports.length !== 1 ? "s" : ""} Nearby
           </ThemedText>
         )}
@@ -148,11 +162,11 @@ export default function MapScreen() {
       {/* Floating Action Button */}
       <View className="absolute bottom-28 right-6">
         <TouchableOpacity
-          className="w-16 h-16 bg-zinc-900 dark:bg-zinc-50 rounded-full items-center justify-center shadow-lg"
+          className="w-16 h-16 bg-theme-primary dark:bg-theme-accent rounded-full items-center justify-center shadow-lg"
           onPress={() => router.push("/report")}
           activeOpacity={0.8}
         >
-          <Plus size={32} color={isDark ? "#09090b" : "#ffffff"} />
+          <Plus size={32} color={isDark ? "#1a2f2b" : "#f2f9f6"} />
         </TouchableOpacity>
       </View>
     </View>

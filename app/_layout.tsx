@@ -1,10 +1,15 @@
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-import { View } from "react-native";
+import { vars } from "nativewind";
+import { useColorScheme, View } from "react-native";
 import { AuthProvider, useAuth } from "../lib/contexts/AuthContext";
-import { ThemeProvider, useTheme } from "../lib/contexts/ThemeContext";
+import {
+  getThemeClass,
+  THEME_COLORS,
+  ThemeProvider,
+  useTheme,
+} from "../lib/contexts/ThemeContext";
 import "./global.css";
 
 SplashScreen.preventAutoHideAsync();
@@ -13,16 +18,19 @@ SplashScreen.preventAutoHideAsync();
 function AppContent() {
   const { session, loading } = useAuth();
   const { theme } = useTheme();
+  const colorScheme = useColorScheme();
 
   if (loading) {
     return null;
   }
 
-  // Apply theme class to root view
-  const themeClass = theme === "default" ? "" : `theme-${theme}`;
+  // Apply theme variables directly via style prop
+  const activeColors =
+    THEME_COLORS[theme][colorScheme === "dark" ? "dark" : "light"];
+  const themeClass = getThemeClass(theme);
 
   return (
-    <View style={{ flex: 1 }} className={themeClass}>
+    <View style={[vars(activeColors), { flex: 1 }]} className={themeClass}>
       {!session ? (
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="login" options={{ headerShown: false }} />
