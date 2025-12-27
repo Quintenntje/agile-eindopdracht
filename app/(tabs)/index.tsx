@@ -61,37 +61,37 @@ export default function HomeScreen() {
         </View>
 
         {/* Points Card */}
-        <View className="bg-zinc-900 dark:bg-zinc-800 p-6 rounded-2xl shadow-lg relative overflow-hidden">
+        <View className="bg-white dark:bg-zinc-800 p-6 rounded-2xl shadow-sm border border-zinc-100 dark:border-zinc-700 relative overflow-hidden">
           {/* Decorative circles */}
-          <View className="absolute -right-4 -top-4 w-24 h-24 bg-zinc-800 dark:bg-zinc-700 rounded-full opacity-50" />
-          <View className="absolute -right-10 top-12 w-20 h-20 bg-zinc-800 dark:bg-zinc-700 rounded-full opacity-50" />
+          <View className="absolute -right-4 -top-4 w-24 h-24 bg-zinc-100 dark:bg-zinc-700 rounded-full opacity-50" />
+          <View className="absolute -right-10 top-12 w-20 h-20 bg-zinc-100 dark:bg-zinc-700 rounded-full opacity-50" />
 
           <View className="flex-row items-center mb-1">
-            <Trophy size={16} color="#f4f4f5" />
-            <ThemedText className="text-zinc-400 font-plus-jakarta-sans-medium text-xs uppercase tracking-wider ml-2">
+            <Trophy size={16} color={isDark ? "#f4f4f5" : "#18181b"} />
+            <ThemedText className="text-zinc-500 dark:text-zinc-400 font-plus-jakarta-sans-medium text-xs uppercase tracking-wider ml-2">
               Total Score
             </ThemedText>
           </View>
           <View className="flex-row items-baseline">
-            <ThemedText className="text-5xl font-plus-jakarta-sans-bold text-white mr-2">
+            <ThemedText className="text-5xl font-plus-jakarta-sans-bold text-zinc-900 dark:text-white mr-2">
               1,250
             </ThemedText>
-            <ThemedText className="text-zinc-400 font-plus-jakarta-sans-medium">
+            <ThemedText className="text-zinc-500 dark:text-zinc-400 font-plus-jakarta-sans-medium">
               pts
             </ThemedText>
           </View>
-          <View className="mt-4 pt-4 border-t border-zinc-800 dark:border-zinc-700 flex-row justify-between items-center">
-            <ThemedText className="text-zinc-400 text-sm">
+          <View className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-700 flex-row justify-between items-center">
+            <ThemedText className="text-zinc-500 dark:text-zinc-400 text-sm">
               Rank:{" "}
-              <ThemedText className="text-white font-plus-jakarta-sans-bold">
+              <ThemedText className="text-zinc-900 dark:text-white font-plus-jakarta-sans-bold">
                 #42
               </ThemedText>
             </ThemedText>
             <TouchableOpacity
               onPress={() => router.push("/leaderboard")}
-              className="bg-zinc-800 dark:bg-zinc-700 px-3 py-1.5 rounded-full"
+              className="bg-zinc-100 dark:bg-zinc-700 px-3 py-1.5 rounded-full"
             >
-              <ThemedText className="text-white text-xs font-plus-jakarta-sans-bold">
+              <ThemedText className="text-zinc-900 dark:text-white text-xs font-plus-jakarta-sans-bold">
                 View Leaderboard
               </ThemedText>
             </TouchableOpacity>
