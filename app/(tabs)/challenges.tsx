@@ -44,16 +44,13 @@ const DEMO_CHALLENGES: ChallengeProps[] = [
 export default function ChallengesScreen() {
   return (
     <ScreenContent
-      className="bg-white dark:bg-zinc-950 pt-2"
+      className="bg-white dark:bg-theme-secondary pt-2"
       contentContainerStyle={{ padding: 16 }}
     >
-      <ThemedText variant="title" className="mb-2 mt-8">
+      <ThemedText variant="title" className="mb-2 mt-8 text-theme-primary">
         Challenges
       </ThemedText>
-      <ThemedText
-        variant="body"
-        className="mb-6 text-zinc-500 dark:text-zinc-400"
-      >
+      <ThemedText variant="body" className="mb-6 text-theme-primary/70">
         Complete challenges to earn points and rewards.
       </ThemedText>
 

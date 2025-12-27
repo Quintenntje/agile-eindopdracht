@@ -26,11 +26,11 @@ export default function HomeScreen() {
 
   return (
     <ScreenContent
-      className="bg-white dark:bg-zinc-950"
+      className="bg-white dark:bg-theme-secondary"
       contentContainerClassName="padding-0"
     >
       {/* Hero Section */}
-      <View className="-mx-0 pt-16 pb-8 px-6 bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 rounded-b-[32px]">
+      <View className="-mx-0 pt-16 pb-8 px-6 bg-theme-secondary/20 dark:bg-theme-primary/5 border-b border-theme-secondary dark:border-theme-primary/10 rounded-b-[32px]">
         <View className="flex-row justify-between items-start mb-6">
           <View>
             {isAdmin && (
@@ -40,21 +40,21 @@ export default function HomeScreen() {
                 </ThemedText>
               </View>
             )}
-            <ThemedText className="text-zinc-500 dark:text-zinc-400 text-lg">
+            <ThemedText className="text-theme-primary/70 text-lg">
               Welcome back,
             </ThemedText>
             <ThemedText
               variant="title"
-              className="text-3xl mt-1 text-zinc-900 dark:text-zinc-50"
+              className="text-3xl mt-1 text-theme-primary"
             >
               {firstName}
             </ThemedText>
           </View>
           <TouchableOpacity
             onPress={() => router.push("/profile")}
-            className="w-12 h-12 bg-white dark:bg-zinc-800 rounded-full items-center justify-center shadow-sm border border-zinc-100 dark:border-zinc-700"
+            className="w-12 h-12 bg-white dark:bg-theme-primary/20 rounded-full items-center justify-center shadow-sm border border-theme-secondary dark:border-theme-primary/10"
           >
-            <ThemedText className="font-plus-jakarta-sans-bold text-lg text-zinc-700 dark:text-zinc-300">
+            <ThemedText className="font-plus-jakarta-sans-bold text-lg text-theme-primary">
               {firstName[0]?.toUpperCase()}
             </ThemedText>
           </TouchableOpacity>

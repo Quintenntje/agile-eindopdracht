@@ -1,4 +1,4 @@
-import { Calendar, Clock } from "lucide-react-native";
+import { Calendar, Clock, Leaf } from "lucide-react-native";
 import { useColorScheme, View, ViewProps } from "react-native";
 import { ThemedText } from "./ThemedText";
 
@@ -34,56 +34,48 @@ export function ChallengeCard({
     100
   );
 
-  const getIcon = () => {
-    const color = isDark ? "#a1a1aa" : "#71717a"; // zinc-400 / zinc-500
-    switch (type) {
-      case "daily":
-        return <Clock size={20} color={color} />; // Changed from Sun to Clock as Sun might not be in the exact set or preferred
-      case "weekly":
-        return <Calendar size={20} color={color} />;
-      default:
-        return <Target size={20} color={color} />; // Fallback
-    }
-  };
-
-  // Need to import Target if used default.
-  // Actually let's just use specific icons or generic ones.
-  // Let's use simple logic: Daily=Clock, Weekly=Calendar, else=CircleCheck for now or similar.
-
   return (
     <View
-      className={`bg-zinc-50 dark:bg-zinc-900 p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 mb-4 ${className}`}
+      className={`bg-white dark:bg-theme-secondary p-4 rounded-2xl border border-theme-secondary dark:border-theme-primary/20 mb-4 shadow-sm ${className}`}
       {...rest}
     >
       <View className="flex-row justify-between items-start mb-2">
         <View className="flex-1 mr-4">
           <View className="flex-row items-center space-x-2 mb-1">
-            <View className="flex-row items-center border border-zinc-200 dark:border-zinc-700 rounded-md px-2 py-0.5">
-              <ThemedText className="text-xs uppercase font-plus-jakarta-sans-medium text-zinc-500 dark:text-zinc-400 mr-2">
+            <View className="flex-row items-center bg-theme-secondary/50 dark:bg-theme-primary/10 rounded-full px-3 py-1">
+              <ThemedText className="text-xs uppercase font-plus-jakarta-sans-bold text-theme-primary mr-2">
                 {type}
               </ThemedText>
               {type === "daily" && (
-                <Clock size={12} color={isDark ? "#a1a1aa" : "#71717a"} />
+                <Clock size={12} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
               )}
               {type === "weekly" && (
-                <Calendar size={12} color={isDark ? "#a1a1aa" : "#71717a"} />
+                <Calendar size={12} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+              )}
+              {type !== "daily" && type !== "weekly" && (
+                <Leaf size={12} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
               )}
             </View>
             {status === "completed" && (
-              <View className="flex-row items-center bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-md">
-                <ThemedText className="text-xs text-green-700 dark:text-green-400 font-plus-jakarta-sans-medium">
+              <View className="flex-row items-center bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">
+                <ThemedText className="text-xs text-green-700 dark:text-green-400 font-plus-jakarta-sans-bold">
                   Done
                 </ThemedText>
               </View>
             )}
           </View>
-          <ThemedText variant="subtitle" className="mb-1">
+          <ThemedText
+            variant="subtitle"
+            className="mb-1 text-theme-primary font-plus-jakarta-sans-bold"
+          >
             {title}
           </ThemedText>
-          <ThemedText variant="caption">{description}</ThemedText>
+          <ThemedText variant="caption" className="text-theme-primary/70">
+            {description}
+          </ThemedText>
         </View>
-        <View className="items-end">
-          <ThemedText className="font-plus-jakarta-sans-bold text-amber-600 dark:text-amber-500 text-lg">
+        <View className="items-end bg-theme-secondary/30 dark:bg-theme-primary/10 p-2 rounded-lg">
+          <ThemedText className="font-plus-jakarta-sans-bold text-theme-accent text-lg">
             +{points} pts
           </ThemedText>
         </View>
@@ -91,16 +83,16 @@ export function ChallengeCard({
 
       <View className="mt-3">
         <View className="flex-row justify-between mb-1">
-          <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400">
+          <ThemedText className="text-xs text-theme-primary/70">
             Progress
           </ThemedText>
-          <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400 font-plus-jakarta-sans-medium">
+          <ThemedText className="text-xs text-theme-primary font-plus-jakarta-sans-bold">
             {currentProgress} / {goalTarget}
           </ThemedText>
         </View>
-        <View className="h-2 bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+        <View className="h-3 bg-theme-secondary dark:bg-theme-primary/20 rounded-full overflow-hidden">
           <View
-            className="h-full bg-zinc-900 dark:bg-zinc-50 rounded-full"
+            className="h-full bg-theme-primary dark:bg-theme-accent rounded-full"
             style={{ width: `${progressPercentage}%` }}
           />
         </View>

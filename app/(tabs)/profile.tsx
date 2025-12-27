@@ -45,25 +45,25 @@ export default function ProfileScreen() {
 
   return (
     <ScreenContent
-      className="bg-white dark:bg-zinc-950"
+      className="bg-white dark:bg-theme-secondary"
       contentContainerStyle={{ paddingBottom: 0 }}
     >
       {/* Header */}
-      <View className="items-center pt-12 pb-8 px-6 bg-zinc-50 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
-        <View className="w-24 h-24 rounded-full bg-zinc-200 dark:bg-zinc-800 items-center justify-center mb-4 border-4 border-white dark:border-zinc-950 shadow-sm">
-          <ThemedText className="text-3xl font-plus-jakarta-sans-bold text-zinc-400 dark:text-zinc-500">
+      <View className="items-center pt-12 pb-8 px-6 bg-theme-secondary/20 dark:bg-theme-primary/5 border-b border-theme-secondary dark:border-theme-primary/10">
+        <View className="w-24 h-24 rounded-full bg-theme-secondary dark:bg-theme-primary/20 items-center justify-center mb-4 border-4 border-white dark:border-theme-secondary shadow-sm">
+          <ThemedText className="text-3xl font-plus-jakarta-sans-bold text-theme-primary">
             {initials}
           </ThemedText>
         </View>
-        <ThemedText variant="title" className="text-center">
+        <ThemedText variant="title" className="text-center text-theme-primary">
           {fullName}
         </ThemedText>
-        <ThemedText className="text-zinc-500 dark:text-zinc-400 mt-1">
+        <ThemedText className="text-theme-primary/70 mt-1">
           {userEmail}
         </ThemedText>
 
-        <TouchableOpacity className="absolute top-12 right-6 p-2 bg-zinc-200 dark:bg-zinc-800 rounded-full">
-          <Settings size={20} color={isDark ? "#a1a1aa" : "#71717a"} />
+        <TouchableOpacity className="absolute top-12 right-6 p-2 bg-theme-secondary dark:bg-theme-primary/20 rounded-full">
+          <Settings size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
         </TouchableOpacity>
       </View>
 
@@ -79,7 +79,7 @@ export default function ProfileScreen() {
             </View>
             <ThemedText
               variant="subtitle"
-              className="font-plus-jakarta-sans-bold"
+              className="font-plus-jakarta-sans-bold text-theme-primary"
             >
               {stat.value}
             </ThemedText>
@@ -90,31 +90,31 @@ export default function ProfileScreen() {
 
       {/* Actions */}
       <View className="px-6 space-y-4">
-        <ThemedText variant="subtitle" className="mb-2 ml-1">
+        <ThemedText variant="subtitle" className="mb-2 ml-1 text-theme-primary">
           Account
         </ThemedText>
 
         <TouchableOpacity
           onPress={() => router.push("/store")}
-          className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 mb-2"
+          className="flex-row items-center p-4 bg-white dark:bg-theme-primary/5 rounded-2xl border border-theme-secondary dark:border-theme-primary/20 mb-2 shadow-sm"
         >
-          <View className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 items-center justify-center mr-4">
-            <Palette size={20} color={isDark ? "#e4e4e7" : "#52525b"} />
+          <View className="w-10 h-10 rounded-full bg-theme-secondary dark:bg-theme-primary/20 items-center justify-center mr-4">
+            <Palette size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
           </View>
           <View className="flex-1">
-            <ThemedText className="font-plus-jakarta-sans-medium">
+            <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary">
               Theme Store
             </ThemedText>
             <ThemedText variant="caption">Customize app appearance</ThemedText>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800">
-          <View className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 items-center justify-center mr-4">
-            <Edit2 size={20} color={isDark ? "#e4e4e7" : "#52525b"} />
+        <TouchableOpacity className="flex-row items-center p-4 bg-white dark:bg-theme-primary/5 rounded-2xl border border-theme-secondary dark:border-theme-primary/20 shadow-sm">
+          <View className="w-10 h-10 rounded-full bg-theme-secondary dark:bg-theme-primary/20 items-center justify-center mr-4">
+            <Edit2 size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
           </View>
           <View className="flex-1">
-            <ThemedText className="font-plus-jakarta-sans-medium">
+            <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary">
               Edit Profile
             </ThemedText>
             <ThemedText variant="caption">
@@ -125,7 +125,7 @@ export default function ProfileScreen() {
 
         <TouchableOpacity
           onPress={handleLogout}
-          className="flex-row items-center p-4 bg-red-50 dark:bg-red-900/10 rounded-xl border border-red-100 dark:border-red-900/20 mt-4"
+          className="flex-row items-center p-4 bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-900/20 mt-4"
         >
           <View className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 items-center justify-center mr-4">
             <LogOut size={20} color="#ef4444" />
