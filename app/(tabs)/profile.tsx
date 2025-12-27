@@ -5,6 +5,7 @@ import {
   FileText,
   LogOut,
   MapPin,
+  Palette,
   Settings,
 } from "lucide-react-native";
 import { Alert, TouchableOpacity, useColorScheme, View } from "react-native";
@@ -92,6 +93,21 @@ export default function ProfileScreen() {
         <ThemedText variant="subtitle" className="mb-2 ml-1">
           Account
         </ThemedText>
+
+        <TouchableOpacity
+          onPress={() => router.push("/store")}
+          className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800 mb-2"
+        >
+          <View className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 items-center justify-center mr-4">
+            <Palette size={20} color={isDark ? "#e4e4e7" : "#52525b"} />
+          </View>
+          <View className="flex-1">
+            <ThemedText className="font-plus-jakarta-sans-medium">
+              Theme Store
+            </ThemedText>
+            <ThemedText variant="caption">Customize app appearance</ThemedText>
+          </View>
+        </TouchableOpacity>
 
         <TouchableOpacity className="flex-row items-center p-4 bg-zinc-50 dark:bg-zinc-900 rounded-xl border border-zinc-100 dark:border-zinc-800">
           <View className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 items-center justify-center mr-4">
