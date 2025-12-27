@@ -14,3 +14,7 @@ Make sure the reports actually get send to the database, the image needs to be s
 Make a good looking homepage that contains all the important information and usefull information for the user, read the rules, So it fits the design chooses and the idea.md so you know what we want to achieve. 
 
 
+
+Make a leaderboard page showing a list of the top 50 people, for the top 3 I want a podium like design
+With 1st place in gold, 2nd place in silver and 3rd place in bronze and the rest just under that
+ use a playfull design.
