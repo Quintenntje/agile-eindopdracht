@@ -1,5 +1,5 @@
-import { ScrollView, View } from "react-native";
 import { ChallengeCard, ChallengeProps } from "../../components/ChallengeCard";
+import { ScreenContent } from "../../components/ScreenContent";
 import { ThemedText } from "../../components/ThemedText";
 
 const DEMO_CHALLENGES: ChallengeProps[] = [
@@ -43,38 +43,39 @@ const DEMO_CHALLENGES: ChallengeProps[] = [
 
 export default function ChallengesScreen() {
   return (
-    <View className="flex-1 bg-white dark:bg-zinc-950 pt-2">
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <ThemedText variant="title" className="mb-2 mt-8">
-          Challenges
-        </ThemedText>
-        <ThemedText
-          variant="body"
-          className="mb-6 text-zinc-500 dark:text-zinc-400"
-        >
-          Complete challenges to earn points and rewards.
-        </ThemedText>
+    <ScreenContent
+      className="bg-white dark:bg-zinc-950 pt-2"
+      contentContainerStyle={{ padding: 16 }}
+    >
+      <ThemedText variant="title" className="mb-2 mt-8">
+        Challenges
+      </ThemedText>
+      <ThemedText
+        variant="body"
+        className="mb-6 text-zinc-500 dark:text-zinc-400"
+      >
+        Complete challenges to earn points and rewards.
+      </ThemedText>
 
-        <ThemedText variant="subtitle" className="mb-4">
-          Active
-        </ThemedText>
+      <ThemedText variant="subtitle" className="mb-4">
+        Active
+      </ThemedText>
 
-        {DEMO_CHALLENGES.filter((c) => c.status === "in_progress").map(
-          (challenge, index) => (
-            <ChallengeCard key={index} {...challenge} />
-          )
-        )}
+      {DEMO_CHALLENGES.filter((c) => c.status === "in_progress").map(
+        (challenge, index) => (
+          <ChallengeCard key={index} {...challenge} />
+        )
+      )}
 
-        <ThemedText variant="subtitle" className="mb-4 mt-4">
-          Completed
-        </ThemedText>
+      <ThemedText variant="subtitle" className="mb-4 mt-4">
+        Completed
+      </ThemedText>
 
-        {DEMO_CHALLENGES.filter((c) => c.status !== "in_progress").map(
-          (challenge, index) => (
-            <ChallengeCard key={index} {...challenge} />
-          )
-        )}
-      </ScrollView>
-    </View>
+      {DEMO_CHALLENGES.filter((c) => c.status !== "in_progress").map(
+        (challenge, index) => (
+          <ChallengeCard key={index} {...challenge} />
+        )
+      )}
+    </ScreenContent>
   );
 }

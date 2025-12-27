@@ -10,3 +10,7 @@ Based on the login that you created make it functional by adding the created dat
 
 
 Make sure the reports actually get send to the database, the image needs to be stored in supabase storage and the data in the recorded_trash table.
+
+Make a good looking homepage that contains all the important information and usefull information for the user, read the rules, So it fits the design chooses and the idea.md so you know what we want to achieve. 
+
+
