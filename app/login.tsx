@@ -21,7 +21,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (session) {
-      router.replace("/(tabs)");
+      router.replace("/");
     }
   }, [session]);
 
@@ -45,8 +45,8 @@ export default function LoginScreen() {
       }
 
       // Navigation will happen automatically via auth state change
-      router.replace("/(tabs)");
-    } catch (error) {
+      router.replace("/");
+    } catch (_) {
       Alert.alert("Error", "An unexpected error occurred");
       setIsLoading(false);
     }
@@ -97,7 +97,7 @@ export default function LoginScreen() {
 
           <View className="flex-row justify-center mt-4">
             <ThemedText className="text-zinc-500 dark:text-zinc-400 mr-1">
-              Don't have an account?
+              Don&apos;t have an account?
             </ThemedText>
             <Link href="/register" asChild>
               <ThemedText variant="link">Sign Up</ThemedText>

@@ -18,3 +18,6 @@ Make a good looking homepage that contains all the important information and use
 Make a leaderboard page showing a list of the top 50 people, for the top 3 I want a podium like design
 With 1st place in gold, 2nd place in silver and 3rd place in bronze and the rest just under that
  use a playfull design.
+
+
+ Make it so the admin user has a different navigation pages, like reports with a list of all user reports 

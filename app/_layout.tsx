@@ -39,7 +39,9 @@ function AppContent() {
         </Stack>
       ) : (
         <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(admin-tabs)" options={{ headerShown: false }} />
           <Stack.Screen
             name="report"
             options={{

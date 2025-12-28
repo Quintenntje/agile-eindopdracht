@@ -86,7 +86,7 @@ export default function RegisterScreen() {
       }
 
       // Navigation will happen automatically via auth state change
-      router.replace("/(tabs)");
+      router.replace("/");
     } catch (error) {
       Alert.alert("Error", "An unexpected error occurred");
       setIsLoading(false);
