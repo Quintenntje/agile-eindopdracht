@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { Camera, MapPin, X } from "lucide-react-native";
+import { Camera, Image as ImageIcon, MapPin, X } from "lucide-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -17,16 +17,21 @@ import { ThemedText } from "../components/ThemedText";
 import { useAuth } from "../lib/contexts/AuthContext";
 import { supabase } from "../lib/utils/supabase";
 
+import { ResizeMode, Video } from "expo-av";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { getThemeClass, useTheme } from "../lib/contexts/ThemeContext";
+
+type MediaType = "image" | "video" | null;
 
 export default function ReportScreen() {
   const { user } = useAuth();
   const { theme } = useTheme();
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState<string | null>(null);
+  const [mediaUri, setMediaUri] = useState<string | null>(null);
+  const [afterImageUri, setAfterImageUri] = useState<string | null>(null);
+  const [mediaType, setMediaType] = useState<MediaType>(null);
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [coordinates, setCoordinates] = useState<{
@@ -37,8 +42,6 @@ export default function ReportScreen() {
   const isDark = colorScheme === "dark";
 
   const themeClass = getThemeClass(theme);
-
-  // Removed useEffect for automatic location fetching
 
   const getCurrentLocation = async () => {
     setLoadingLocation(true);
@@ -72,21 +75,114 @@ export default function ReportScreen() {
     }
   };
 
-  const pickImage = async () => {
+  const pickMedia = async (type: "image" | "video") => {
     try {
-      const result = await ImagePicker.launchCameraAsync({
+      if (type === "image") {
+        const result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [4, 3],
+          quality: 0.5,
+        });
+
+        if (!result.canceled) {
+          setMediaUri(result.assets[0].uri);
+          setMediaType("image");
+        }
+      } else {
+        const result = await ImagePicker.launchCameraAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+          allowsEditing: true,
+          videoMaxDuration: 30, // Max 30 seconds
+          quality: 0.5,
+        });
+
+        if (!result.canceled) {
+          setMediaUri(result.assets[0].uri);
+          setMediaType("video");
+        }
+      }
+    } catch {
+      Alert.alert("Error capturing media");
+    }
+  };
+
+  const pickFromLibrary = async (type: "image" | "video") => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes:
+          type === "image"
+            ? ImagePicker.MediaTypeOptions.Images
+            : ImagePicker.MediaTypeOptions.Videos,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.5,
+        videoMaxDuration: 30,
+      });
+
+      if (!result.canceled) {
+        setMediaUri(result.assets[0].uri);
+        setMediaType(type);
+        // Reset after image if main type changes to video (though UI hides it)
+        if (type === "video") setAfterImageUri(null);
+      }
+    } catch {
+      Alert.alert("Error selecting media");
+    }
+  };
+
+  const pickAfterImage = async (source: "camera" | "library") => {
+    try {
+      let result;
+      const options: ImagePicker.ImagePickerOptions = {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.5,
-      });
+      };
+
+      if (source === "camera") {
+        result = await ImagePicker.launchCameraAsync(options);
+      } else {
+        result = await ImagePicker.launchImageLibraryAsync(options);
+      }
 
       if (!result.canceled) {
-        setImage(result.assets[0].uri);
+        setAfterImageUri(result.assets[0].uri);
       }
     } catch {
-      Alert.alert("Error taking picture");
+      Alert.alert("Error capturing after photo");
     }
+  };
+
+  const showMediaPicker = () => {
+    Alert.alert(
+      "Add Evidence",
+      "Choose how to capture evidence",
+      [
+        {
+          text: "Take Photo",
+          onPress: () => pickMedia("image"),
+        },
+        {
+          text: "Record Video",
+          onPress: () => pickMedia("video"),
+        },
+        {
+          text: "Choose Photo from Library",
+          onPress: () => pickFromLibrary("image"),
+        },
+        {
+          text: "Choose Video from Library",
+          onPress: () => pickFromLibrary("video"),
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const handleSubmit = async () => {
@@ -95,8 +191,13 @@ export default function ReportScreen() {
       return;
     }
 
-    if (!image) {
-      Alert.alert("Error", "Please take a picture");
+    if (!mediaUri) {
+      Alert.alert("Error", "Please take a picture or record a video");
+      return;
+    }
+
+    if (mediaType === "image" && !afterImageUri) {
+      Alert.alert("Error", "Please provide a cleanup (after) photo");
       return;
     }
 
@@ -145,36 +246,46 @@ export default function ReportScreen() {
         throw new Error("You must be logged in to submit a report");
       }
 
-      let imageUrl = image;
+      const uploadFile = async (uri: string, type: MediaType) => {
+        if (!uri.startsWith("file://")) return uri;
 
-      if (image && image.startsWith("file://")) {
-        const fileExt = image.split(".").pop() || "jpg";
-        const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+        const fileExt =
+          uri.split(".").pop() || (type === "video" ? "mp4" : "jpg");
+        const fileName = `${user.id}-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const mimeType = type === "video" ? "video/mp4" : "image/jpeg";
 
         const formData = new FormData();
         formData.append("file", {
-          uri: image,
+          uri: uri,
           name: fileName,
-          type: "image/jpeg",
+          type: mimeType,
         } as any);
 
         const { error: uploadError } = await supabase.storage
           .from("trash-images")
           .upload(fileName, formData);
 
-        if (uploadError) {
-          throw uploadError;
-        }
+        if (uploadError) throw uploadError;
 
         const {
           data: { publicUrl },
         } = supabase.storage.from("trash-images").getPublicUrl(fileName);
-        imageUrl = publicUrl;
+
+        return publicUrl;
+      };
+
+      const uploadedUrl = await uploadFile(mediaUri, mediaType);
+
+      let afterImageUrl = null;
+      if (mediaType === "image" && afterImageUri) {
+        afterImageUrl = await uploadFile(afterImageUri, "image");
       }
 
       const { error } = await supabase.from("recorded_trash").insert({
         user_id: user.id,
-        image: imageUrl,
+        image: uploadedUrl,
+        after_image: afterImageUrl,
+        media_type: mediaType, // Store the media type
         lat: finalCoordinates.lat,
         long: finalCoordinates.long,
         description: description || null,
@@ -197,6 +308,12 @@ export default function ReportScreen() {
     }
   };
 
+  const clearMedia = () => {
+    setMediaUri(null);
+    setAfterImageUri(null);
+    setMediaType(null);
+  };
+
   return (
     <View
       className={`flex-1 bg-white dark:bg-theme-secondary pt-2 ${themeClass}`}
@@ -209,38 +326,137 @@ export default function ReportScreen() {
           onPress={() => router.back()}
           className="p-2 bg-theme-secondary dark:bg-theme-primary/10 rounded-full"
         >
-          <X size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+          <X size={20} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
         </Pressable>
       </View>
 
       <ScrollView className="flex-1 p-6">
-        {/* Picture Area */}
+        {/* Picture/Video Area */}
         <ThemedText
           variant="caption"
           className="mb-2 uppercase tracking-wider text-theme-primary/70"
         >
-          Evidence
+          1. Before Evidence
         </ThemedText>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={pickImage}
-          className="w-full h-64 bg-theme-secondary/20 dark:bg-theme-primary/5 rounded-2xl items-center justify-center border-2 border-dashed border-theme-secondary dark:border-theme-primary/20 mb-6 overflow-hidden"
-        >
-          {image ? (
-            <Image
-              source={{ uri: image }}
-              className="w-full h-full"
-              resizeMode="cover"
-            />
-          ) : (
-            <View className="items-center">
-              <Camera size={48} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
-              <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium">
-                Tap to take picture
-              </ThemedText>
+
+        {mediaUri ? (
+          <View className="mb-6">
+            <View className="w-full h-64 rounded-2xl overflow-hidden border-2 border-theme-secondary dark:border-theme-primary/20">
+              {mediaType === "video" ? (
+                <Video
+                  source={{ uri: mediaUri }}
+                  style={{ width: "100%", height: "100%" }}
+                  useNativeControls
+                  resizeMode={ResizeMode.COVER}
+                  isLooping={false}
+                />
+              ) : (
+                <Image
+                  source={{ uri: mediaUri }}
+                  className="w-full h-full"
+                  resizeMode="cover"
+                />
+              )}
             </View>
-          )}
-        </TouchableOpacity>
+            <View className="flex-row gap-3 mt-3">
+              <TouchableOpacity
+                onPress={showMediaPicker}
+                className="flex-1 bg-theme-secondary dark:bg-theme-primary/20 p-3 rounded-xl items-center"
+              >
+                <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary text-sm">
+                  Retake
+                </ThemedText>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={clearMedia}
+                className="flex-1 bg-red-100 dark:bg-red-900/20 p-3 rounded-xl items-center"
+              >
+                <ThemedText className="font-plus-jakarta-sans-medium text-red-600 dark:text-red-400 text-sm">
+                  Remove
+                </ThemedText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        ) : (
+          <View className="flex-row gap-3 mb-6">
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={showMediaPicker}
+              className="flex-1 h-40 bg-theme-secondary/20 dark:bg-theme-primary/5 rounded-2xl items-center justify-center border-2 border-dashed border-theme-secondary dark:border-theme-primary/20"
+            >
+              <Camera size={36} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+              <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium text-sm">
+                Add Media
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* After Picture Area (Only for Images) */}
+        {mediaType === "image" && (
+          <View className="mb-6">
+            <ThemedText
+              variant="caption"
+              className="mb-2 uppercase tracking-wider text-theme-primary/70"
+            >
+              2. After Evidence (Required)
+            </ThemedText>
+
+            {afterImageUri ? (
+              <View>
+                <View className="w-full h-64 rounded-2xl overflow-hidden border-2 border-theme-secondary dark:border-theme-primary/20">
+                  <Image
+                    source={{ uri: afterImageUri }}
+                    className="w-full h-full"
+                    resizeMode="cover"
+                  />
+                </View>
+                <View className="flex-row gap-3 mt-3">
+                  <TouchableOpacity
+                    onPress={() => pickAfterImage("camera")}
+                    className="flex-1 bg-theme-secondary dark:bg-theme-primary/20 p-3 rounded-xl items-center"
+                  >
+                    <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary text-sm">
+                      Retake
+                    </ThemedText>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => setAfterImageUri(null)}
+                    className="flex-1 bg-red-100 dark:bg-red-900/20 p-3 rounded-xl items-center"
+                  >
+                    <ThemedText className="font-plus-jakarta-sans-medium text-red-600 dark:text-red-400 text-sm">
+                      Remove
+                    </ThemedText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ) : (
+              <View className="flex-row gap-3">
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => pickAfterImage("camera")}
+                  className="flex-1 h-40 bg-theme-secondary/20 dark:bg-theme-primary/5 rounded-2xl items-center justify-center border-2 border-dashed border-theme-secondary dark:border-theme-primary/20"
+                >
+                  <Camera size={24} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+                  <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium text-xs">
+                    Take Photo
+                  </ThemedText>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => pickAfterImage("library")}
+                  className="flex-1 h-40 bg-theme-secondary/20 dark:bg-theme-primary/5 rounded-2xl items-center justify-center border-2 border-dashed border-theme-secondary dark:border-theme-primary/20"
+                >
+                  <ImageIcon size={24} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+                  <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium text-xs">
+                    From Library
+                  </ThemedText>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        )}
 
         {/* Location Area */}
         <ThemedText
@@ -270,11 +486,11 @@ export default function ReportScreen() {
             {loadingLocation ? (
               <ActivityIndicator
                 size="small"
-                color={isDark ? "#f2f9f6" : "#1a4d2e"}
+                color={isDark ? "#e8f3ee" : "#1a4d2e"}
               />
             ) : (
               <>
-                <MapPin size={18} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+                <MapPin size={18} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
                 <ThemedText className="ml-2 font-plus-jakarta-sans-medium text-theme-primary">
                   Use my current location
                 </ThemedText>
@@ -306,7 +522,12 @@ export default function ReportScreen() {
           label="Submit Report"
           onPress={handleSubmit}
           isLoading={isSubmitting}
-          disabled={!image || (!coordinates && !address) || !user}
+          disabled={
+            !mediaUri ||
+            (mediaType === "image" && !afterImageUri) ||
+            (!coordinates && !address) ||
+            !user
+          }
         />
       </View>
     </View>

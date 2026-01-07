@@ -1,21 +1,23 @@
-import { router } from "expo-router";
-import {
-  Award,
-  Camera,
-  ChevronRight,
-  Map as MapIcon,
-  Trophy,
-  Zap,
-} from "lucide-react-native";
+import { router, useFocusEffect } from "expo-router";
+import { Camera, Map as MapIcon, Medal, Trophy } from "lucide-react-native";
+import { useCallback, useState } from "react";
 import { TouchableOpacity, useColorScheme, View } from "react-native";
 import { ScreenContent } from "../../components/ScreenContent";
 import { ThemedText } from "../../components/ThemedText";
 import { useAuth } from "../../lib/contexts/AuthContext";
+import { supabase } from "../../lib/utils/supabase";
 
 export default function HomeScreen() {
   const { user } = useAuth();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const [stats, setStats] = useState({
+    points: 0,
+    rank: 0,
+    totalReports: 0,
+  });
+  const [pendingReports, setPendingReports] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Check metadata for admin role
   const isAdmin =
@@ -23,6 +25,62 @@ export default function HomeScreen() {
     user?.app_metadata?.role === "admin";
 
   const firstName = user?.user_metadata?.first_name || "Citizen";
+
+  const fetchUserData = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      // Fetch points
+      const { data: pointsData } = await supabase
+        .from("user_points")
+        .select("total_points")
+        .eq("user_id", user.id)
+        .single();
+
+      const points = pointsData?.total_points || 0;
+
+      // Fetch rank (simple count of users with more points)
+      // Note: This is an estimation. Real app might use a materialized view or RPC.
+      const { count: rankCount } = await supabase
+        .from("user_points")
+        .select("*", { count: "exact", head: true })
+        .gt("total_points", points);
+
+      const rank = (rankCount || 0) + 1;
+
+      // Fetch total reports count
+      const { count: reportsCount } = await supabase
+        .from("recorded_trash")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id);
+
+      // Fetch pending reports
+      const { data: pendingData } = await supabase
+        .from("recorded_trash")
+        .select("*")
+        .eq("user_id", user.id)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      setStats({
+        points,
+        rank,
+        totalReports: reportsCount || 0,
+      });
+      setPendingReports(pendingData || []);
+    } catch (error) {
+      console.error("Error fetching home data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+    }, [fetchUserData])
+  );
 
   return (
     <ScreenContent
@@ -67,14 +125,14 @@ export default function HomeScreen() {
           <View className="absolute -right-10 top-12 w-20 h-20 bg-zinc-100 dark:bg-zinc-700 rounded-full opacity-50" />
 
           <View className="flex-row items-center mb-1">
-            <Trophy size={16} color={isDark ? "#f4f4f5" : "#18181b"} />
+            <Trophy size={16} color={isDark ? "#e8f3ee" : "#18181b"} />
             <ThemedText className="text-zinc-500 dark:text-zinc-400 font-plus-jakarta-sans-medium text-xs uppercase tracking-wider ml-2">
               Total Score
             </ThemedText>
           </View>
           <View className="flex-row items-baseline">
             <ThemedText className="text-5xl font-plus-jakarta-sans-bold text-zinc-900 dark:text-white mr-2">
-              1,250
+              {loading ? "..." : stats.points.toLocaleString()}
             </ThemedText>
             <ThemedText className="text-zinc-500 dark:text-zinc-400 font-plus-jakarta-sans-medium">
               pts
@@ -84,7 +142,7 @@ export default function HomeScreen() {
             <ThemedText className="text-zinc-500 dark:text-zinc-400 text-sm">
               Rank:{" "}
               <ThemedText className="text-zinc-900 dark:text-white font-plus-jakarta-sans-bold">
-                #42
+                #{loading ? "..." : stats.rank}
               </ThemedText>
             </ThemedText>
             <TouchableOpacity
@@ -107,13 +165,13 @@ export default function HomeScreen() {
           className="flex-1 bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-sm border border-zinc-100 dark:border-zinc-800 items-center justify-center py-6"
         >
           <View className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/30 rounded-full items-center justify-center mb-3">
-            <Camera size={24} color="#4f46e5" />
+            <Camera size={24} color={isDark ? "#818cf8" : "#4f46e5"} />
           </View>
           <ThemedText className="font-plus-jakarta-sans-bold text-zinc-900 dark:text-zinc-50">
             Report Trash
           </ThemedText>
           <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400 text-center mt-1">
-            Earn 50 pts
+            Earn 10 pts
           </ThemedText>
         </TouchableOpacity>
 
@@ -123,7 +181,7 @@ export default function HomeScreen() {
           className="flex-1 bg-white dark:bg-zinc-900 p-4 rounded-2xl shadow-sm border border-zinc-100 dark:border-zinc-800 items-center justify-center py-6"
         >
           <View className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-full items-center justify-center mb-3">
-            <MapIcon size={24} color="#10b981" />
+            <MapIcon size={24} color={isDark ? "#34d399" : "#10b981"} />
           </View>
           <ThemedText className="font-plus-jakarta-sans-bold text-zinc-900 dark:text-zinc-50">
             View Map
@@ -134,97 +192,53 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Active Challenges Preview */}
-      <View className="px-6 mt-8">
+      {/* Pending Reports Section */}
+      <View className="px-6 mt-8 mb-8">
         <View className="flex-row justify-between items-center mb-4">
-          <ThemedText variant="subtitle">Active Challenge</ThemedText>
-          <TouchableOpacity onPress={() => router.push("/challenges")}>
-            <ThemedText className="text-indigo-600 dark:text-indigo-400 text-sm font-plus-jakarta-sans-medium">
-              View All
-            </ThemedText>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          onPress={() => router.push("/challenges")}
-          activeOpacity={0.8}
-          className="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-2xl border border-zinc-200 dark:border-zinc-800 flex-row items-center"
-        >
-          <View className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-full items-center justify-center mr-4">
-            <Zap size={20} color="#d97706" />
-          </View>
-          <View className="flex-1">
-            <ThemedText className="font-plus-jakarta-sans-bold text-zinc-900 dark:text-zinc-50 mb-0.5">
-              Weekend Warrior
-            </ThemedText>
-            <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400">
-              Report 5 items this weekend
-            </ThemedText>
-            {/* Progress Bar Mini */}
-            <View className="h-1.5 bg-zinc-200 dark:bg-zinc-800 rounded-full mt-2 w-full overflow-hidden">
-              <View className="h-full bg-amber-500 w-[60%] rounded-full" />
-            </View>
-          </View>
-          <View className="ml-4 items-end">
-            <ThemedText className="font-plus-jakarta-sans-bold text-amber-600 dark:text-amber-500">
-              3/5
-            </ThemedText>
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      {/* Leaderboard Preview */}
-      <View className="px-6 mt-8">
-        <View className="flex-row justify-between items-center mb-4">
-          <ThemedText variant="subtitle">Top Cleaners</ThemedText>
-          <TouchableOpacity onPress={() => router.push("/leaderboard")}>
-            <ThemedText className="text-zinc-500 dark:text-zinc-400 text-sm">
-              This Week
-            </ThemedText>
-          </TouchableOpacity>
-        </View>
-
-        {[
-          { name: "Sarah V.", points: 2400, rank: 1, color: "#eab308" }, // yellow
-          { name: "Mike T.", points: 2150, rank: 2, color: "#94a3b8" }, // slate
-          { name: "Emma L.", points: 1900, rank: 3, color: "#b45309" }, // amber-700 (bronze)
-        ].map((player, index) => (
-          <View
-            key={index}
-            className="flex-row items-center py-3 border-b border-zinc-100 dark:border-zinc-800 last:border-0"
-          >
-            <View className="w-8 items-center mr-3">
-              {index < 3 ? (
-                <Award size={20} color={player.color} />
-              ) : (
-                <ThemedText className="text-zinc-500 font-plus-jakarta-sans-bold">
-                  {player.rank}
-                </ThemedText>
-              )}
-            </View>
-            <View className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-full items-center justify-center mr-3">
-              <ThemedText className="text-xs font-plus-jakarta-sans-bold text-zinc-600 dark:text-zinc-400">
-                {player.name[0]}
-              </ThemedText>
-            </View>
-            <ThemedText className="flex-1 font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-50">
-              {player.name}
-            </ThemedText>
-            <ThemedText className="font-plus-jakarta-sans-bold text-zinc-900 dark:text-zinc-50">
-              {player.points}
-            </ThemedText>
-          </View>
-        ))}
-
-        <TouchableOpacity
-          onPress={() => router.push("/leaderboard")}
-          className="mt-4 w-full bg-zinc-100 dark:bg-zinc-800 py-3 rounded-xl items-center flex-row justify-center"
-        >
-          <ThemedText className="text-zinc-900 dark:text-zinc-100 font-plus-jakarta-sans-bold mr-2">
-            View Full Leaderboard
+          <ThemedText variant="subtitle">Pending Reports</ThemedText>
+          <ThemedText className="text-zinc-500 dark:text-zinc-400 text-sm">
+            {pendingReports.length} Pending
           </ThemedText>
-          <ChevronRight size={16} color={isDark ? "#f4f4f5" : "#18181b"} />
-        </TouchableOpacity>
+        </View>
+
+        {pendingReports.length > 0 ? (
+          pendingReports.map((report, index) => (
+            <View
+              key={report.id}
+              className="flex-row items-center py-3 border-b border-zinc-100 dark:border-zinc-800 last:border-0"
+            >
+              <View className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-full items-center justify-center mr-3">
+                <Medal size={20} color={isDark ? "#fbbf24" : "#d97706"} />
+              </View>
+              <View className="flex-1">
+                <ThemedText
+                  className="font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-50"
+                  numberOfLines={1}
+                >
+                  {report.location_name || report.description || "Trash Report"}
+                </ThemedText>
+                <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400">
+                  {new Date(report.created_at).toLocaleDateString()} • Pending
+                  verification
+                </ThemedText>
+              </View>
+              <View className="bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded">
+                <ThemedText className="text-xs font-plus-jakarta-sans-bold text-amber-700 dark:text-amber-500">
+                  Pending
+                </ThemedText>
+              </View>
+            </View>
+          ))
+        ) : (
+          <View className="bg-zinc-50 dark:bg-zinc-900 p-6 rounded-2xl items-center border border-zinc-100 dark:border-zinc-800">
+            <ThemedText className="text-zinc-500 dark:text-zinc-400 text-center mb-2">
+              No pending reports
+            </ThemedText>
+            <ThemedText className="text-xs text-zinc-400 dark:text-zinc-500 text-center">
+              Great job! All your reports have been processed.
+            </ThemedText>
+          </View>
+        )}
       </View>
     </ScreenContent>
   );

@@ -63,7 +63,7 @@ export default function ProfileScreen() {
         </ThemedText>
 
         <TouchableOpacity className="absolute top-12 right-6 p-2 bg-theme-secondary dark:bg-theme-primary/20 rounded-full">
-          <Settings size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+          <Settings size={20} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
         </TouchableOpacity>
       </View>
 
@@ -96,39 +96,26 @@ export default function ProfileScreen() {
 
         <TouchableOpacity
           onPress={() => router.push("/store")}
-          className="flex-row items-center p-4 bg-white dark:bg-theme-primary/5 rounded-2xl border border-theme-secondary dark:border-theme-primary/20 mb-2 shadow-sm"
+          className="flex-row items-center p-4 bg-white dark:bg-theme-primary/15 rounded-2xl border border-theme-secondary dark:border-theme-primary/30 mb-2 shadow-sm"
         >
-          <View className="w-10 h-10 rounded-full bg-theme-secondary dark:bg-theme-primary/20 items-center justify-center mr-4">
-            <Palette size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+          <View className="w-10 h-10 rounded-full bg-theme-secondary dark:bg-theme-primary/30 items-center justify-center mr-4">
+            <Palette size={20} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
           </View>
           <View className="flex-1">
             <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary">
-              Theme Store
+              Rewards store
             </ThemedText>
-            <ThemedText variant="caption">Customize app appearance</ThemedText>
+            <ThemedText variant="caption">Customize app appearance, or buy coupons</ThemedText>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity className="flex-row items-center p-4 bg-white dark:bg-theme-primary/5 rounded-2xl border border-theme-secondary dark:border-theme-primary/20 shadow-sm">
-          <View className="w-10 h-10 rounded-full bg-theme-secondary dark:bg-theme-primary/20 items-center justify-center mr-4">
-            <Edit2 size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
-          </View>
-          <View className="flex-1">
-            <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary">
-              Edit Profile
-            </ThemedText>
-            <ThemedText variant="caption">
-              Update your personal information
-            </ThemedText>
-          </View>
-        </TouchableOpacity>
 
         <TouchableOpacity
           onPress={handleLogout}
           className="flex-row items-center p-4 bg-red-50 dark:bg-red-900/10 rounded-2xl border border-red-100 dark:border-red-900/20 mt-4"
         >
           <View className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 items-center justify-center mr-4">
-            <LogOut size={20} color="#ef4444" />
+            <LogOut size={20} color={isDark ? "#f87171" : "#ef4444"} />
           </View>
           <View className="flex-1">
             <ThemedText className="font-plus-jakarta-sans-medium text-red-600 dark:text-red-400">

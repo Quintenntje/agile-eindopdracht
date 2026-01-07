@@ -3,6 +3,7 @@ import {
   Text,
   TouchableOpacity,
   TouchableOpacityProps,
+  useColorScheme,
 } from "react-native";
 
 interface ButtonProps extends TouchableOpacityProps {
@@ -19,6 +20,9 @@ export function Button({
   disabled,
   ...rest
 }: ButtonProps) {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === "dark";
+  
   let baseStyles =
     "h-14 rounded-full flex-row items-center justify-center px-6 shadow-sm";
   let textStyles = "text-base font-plus-jakarta-sans-medium";
@@ -26,7 +30,7 @@ export function Button({
   switch (variant) {
     case "primary":
       baseStyles += " bg-theme-primary dark:bg-theme-accent";
-      textStyles += " text-theme-primary-fg dark:text-zinc-900"; // Assuming accent is bright, text needs contrast
+      textStyles += " text-theme-primary-fg dark:text-theme-primary-fg";
       break;
     case "secondary":
       baseStyles += " bg-theme-secondary dark:bg-theme-primary/20";
@@ -47,6 +51,14 @@ export function Button({
     baseStyles += " opacity-50";
   }
 
+  // Determine ActivityIndicator color based on variant and theme
+  const getActivityIndicatorColor = () => {
+    if (variant === "primary") {
+      return isDark ? "#1a4d2e" : "#f2f9f6"; // theme-primary-fg inverted for dark
+    }
+    return isDark ? "#f2f9f6" : "#1a4d2e"; // theme-primary
+  };
+
   return (
     <TouchableOpacity
       className={`${baseStyles} ${className}`}
@@ -55,9 +67,7 @@ export function Button({
       {...rest}
     >
       {isLoading ? (
-        <ActivityIndicator
-          color={variant === "primary" ? "#ffffff" : "#1a4d2e"}
-        />
+        <ActivityIndicator color={getActivityIndicatorColor()} />
       ) : (
         <Text className={textStyles}>{label}</Text>
       )}

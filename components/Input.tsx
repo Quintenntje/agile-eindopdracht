@@ -18,12 +18,13 @@ export function Input({ label, error, className, ...rest }: InputProps) {
         </ThemedText>
       )}
       <TextInput
-        placeholderTextColor={isDark ? "#f2f9f6" : "#1a4d2e"}
+        placeholderTextColor={isDark ? "#a1a1aa" : "#71717a"}
         className={`
             h-14 rounded-2xl px-4 
             bg-theme-secondary/20 dark:bg-theme-primary/5 
             border border-theme-secondary dark:border-theme-primary/10 
             text-theme-primary font-plus-jakarta-sans
+            placeholder:text-zinc-400 dark:placeholder:text-zinc-500
             focus:border-theme-accent
             ${error ? "border-red-500 dark:border-red-500" : ""}
             ${className}

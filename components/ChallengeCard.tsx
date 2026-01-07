@@ -47,13 +47,13 @@ export function ChallengeCard({
                 {type}
               </ThemedText>
               {type === "daily" && (
-                <Clock size={12} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+                <Clock size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
               )}
               {type === "weekly" && (
-                <Calendar size={12} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+                <Calendar size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
               )}
               {type !== "daily" && type !== "weekly" && (
-                <Leaf size={12} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+                <Leaf size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
               )}
             </View>
             {status === "completed" && (

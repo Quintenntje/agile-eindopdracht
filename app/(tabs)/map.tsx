@@ -181,23 +181,6 @@ export default function MapScreen() {
         </MapView>
       )}
 
-      {/* Overlay for report count or status */}
-      <View className="absolute top-12 left-4 right-4 bg-white/90 dark:bg-theme-secondary/90 p-4 rounded-xl shadow-sm border border-theme-secondary dark:border-theme-primary/10">
-        {loadingReports ? (
-          <ActivityIndicator
-            size="small"
-            color={isDark ? "#a1a1aa" : "#71717a"}
-          />
-        ) : (
-          <ThemedText
-            variant="subtitle"
-            className="text-center text-theme-primary"
-          >
-            {reports.length} Report{reports.length !== 1 ? "s" : ""} Nearby
-          </ThemedText>
-        )}
-      </View>
-
       {/* Floating Action Button */}
       <View className="absolute bottom-28 right-6">
         <TouchableOpacity
@@ -205,7 +188,7 @@ export default function MapScreen() {
           onPress={() => router.push("/report")}
           activeOpacity={0.8}
         >
-          <Plus size={32} color={isDark ? "#1a2f2b" : "#f2f9f6"} />
+          <Plus size={32} color={isDark ? "#f2f9f6" : "#1a2f2b"} />
         </TouchableOpacity>
       </View>
     </View>

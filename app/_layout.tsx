@@ -5,6 +5,7 @@ import { vars } from "nativewind";
 import { useEffect } from "react";
 import { useColorScheme, View } from "react-native";
 import { AuthProvider, useAuth } from "../lib/contexts/AuthContext";
+import { StoreProvider } from "../lib/contexts/StoreContext";
 import {
   getThemeClass,
   THEME_COLORS,
@@ -86,7 +87,9 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ThemeProvider>
-        <AppContent />
+        <StoreProvider>
+          <AppContent />
+        </StoreProvider>
       </ThemeProvider>
     </AuthProvider>
   );
