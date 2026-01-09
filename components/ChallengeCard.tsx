@@ -1,5 +1,5 @@
-import { Calendar, Clock, Leaf } from "lucide-react-native";
-import { useColorScheme, View, ViewProps } from "react-native";
+import { Calendar, Check, Clock, Gift, Leaf } from "lucide-react-native";
+import { TouchableOpacity, useColorScheme, View, ViewProps } from "react-native";
 import { ThemedText } from "./ThemedText";
 
 export type ChallengeType = "daily" | "weekly" | "seasonal" | "one_time";
@@ -7,6 +7,7 @@ export type ChallengeType = "daily" | "weekly" | "seasonal" | "one_time";
 export type ChallengeStatus = "in_progress" | "completed" | "claimed";
 
 export interface ChallengeProps extends ViewProps {
+  id?: string;
   title: string;
   description: string;
   points: number;
@@ -14,9 +15,12 @@ export interface ChallengeProps extends ViewProps {
   currentProgress: number;
   goalTarget: number;
   status: ChallengeStatus;
+  onClaim?: (id: string) => void;
+  isClaiming?: boolean;
 }
 
 export function ChallengeCard({
+  id,
   title,
   description,
   points,
@@ -24,6 +28,8 @@ export function ChallengeCard({
   currentProgress,
   goalTarget,
   status,
+  onClaim,
+  isClaiming,
   className,
   ...rest
 }: ChallengeProps) {
@@ -33,6 +39,8 @@ export function ChallengeCard({
     (currentProgress / goalTarget) * 100,
     100
   );
+
+  const typeLabel = type === "one_time" ? "milestone" : type;
 
   return (
     <View
@@ -44,7 +52,7 @@ export function ChallengeCard({
           <View className="flex-row items-center space-x-2 mb-1">
             <View className="flex-row items-center bg-theme-secondary/50 dark:bg-theme-primary/10 rounded-full px-3 py-1">
               <ThemedText className="text-xs uppercase font-plus-jakarta-sans-bold text-theme-primary mr-2">
-                {type}
+                {typeLabel}
               </ThemedText>
               {type === "daily" && (
                 <Clock size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
@@ -52,14 +60,18 @@ export function ChallengeCard({
               {type === "weekly" && (
                 <Calendar size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
               )}
-              {type !== "daily" && type !== "weekly" && (
+              {type === "one_time" && (
+                <Gift size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+              )}
+              {type !== "daily" && type !== "weekly" && type !== "one_time" && (
                 <Leaf size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
               )}
             </View>
-            {status === "completed" && (
-              <View className="flex-row items-center bg-green-100 dark:bg-green-900/30 px-2 py-0.5 rounded-full">
-                <ThemedText className="text-xs text-green-700 dark:text-green-400 font-plus-jakarta-sans-bold">
-                  Done
+            {status === "claimed" && (
+              <View className="flex-row items-center bg-theme-primary/20 dark:bg-theme-accent/30 px-2 py-0.5 rounded-full">
+                <Check size={10} color={isDark ? "#4ade80" : "#1a4d2e"} />
+                <ThemedText className="text-xs text-theme-primary dark:text-theme-accent font-plus-jakarta-sans-bold ml-1">
+                  Claimed
                 </ThemedText>
               </View>
             )}
@@ -97,6 +109,19 @@ export function ChallengeCard({
           />
         </View>
       </View>
+
+      {status === "completed" && onClaim && id && (
+        <TouchableOpacity
+          onPress={() => onClaim(id)}
+          disabled={isClaiming}
+          className="mt-4 bg-theme-accent py-3 rounded-xl items-center"
+          activeOpacity={0.8}
+        >
+          <ThemedText className="font-plus-jakarta-sans-bold text-white text-sm">
+            {isClaiming ? "Claiming..." : "Claim Reward"}
+          </ThemedText>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

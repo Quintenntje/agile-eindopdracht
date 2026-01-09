@@ -1,11 +1,11 @@
 import { router } from "expo-router";
 import {
   Award,
-  Edit2,
+  ChevronRight,
   FileText,
+  Gift,
   LogOut,
   MapPin,
-  Palette,
   Settings,
 } from "lucide-react-native";
 import { Alert, TouchableOpacity, useColorScheme, View } from "react-native";
@@ -96,17 +96,21 @@ export default function ProfileScreen() {
 
         <TouchableOpacity
           onPress={() => router.push("/store")}
-          className="flex-row items-center p-4 bg-white dark:bg-theme-primary/15 rounded-2xl border border-theme-secondary dark:border-theme-primary/30 mb-2 shadow-sm"
+          className="flex-row items-center p-4 bg-theme-secondary/30 dark:bg-theme-primary/10 rounded-2xl border border-theme-secondary dark:border-theme-primary/20 mb-2"
+          activeOpacity={0.7}
         >
-          <View className="w-10 h-10 rounded-full bg-theme-secondary dark:bg-theme-primary/30 items-center justify-center mr-4">
-            <Palette size={20} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+          <View className="w-10 h-10 rounded-full bg-theme-primary/10 dark:bg-theme-accent/20 items-center justify-center mr-4">
+            <Gift size={20} color={isDark ? "#4ade80" : "#1a4d2e"} />
           </View>
           <View className="flex-1">
             <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary">
-              Rewards store
+              Rewards Store
             </ThemedText>
-            <ThemedText variant="caption">Customize app appearance, or buy coupons</ThemedText>
+            <ThemedText variant="caption" className="text-theme-primary/60">
+              Themes & coupons
+            </ThemedText>
           </View>
+          <ChevronRight size={20} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
         </TouchableOpacity>
 
 

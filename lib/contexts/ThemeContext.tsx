@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-export type ThemeOption = "default" | "ocean" | "sunset" | "forest";
+export type ThemeOption = "default" | "eco" | "ocean" | "sunset" | "forest";
 
 type ThemeContextType = {
   theme: ThemeOption;
@@ -24,10 +24,11 @@ export const THEMES: {
   price: number;
   color: string;
 }[] = [
-  { id: "default", name: "Eco Nature", price: 0, color: "#1a4d2e" },
-  { id: "ocean", name: "Ocean Blue", price: 500, color: "#0e7490" },
-  { id: "sunset", name: "Sunset Orange", price: 500, color: "#c2410c" },
-  { id: "forest", name: "Forest Green", price: 500, color: "#15803d" },
+  { id: "default", name: "Classic", price: 0, color: "#18181b" },
+  { id: "eco", name: "Eco Nature", price: 1000, color: "#1a4d2e" },
+  { id: "ocean", name: "Ocean Blue", price: 1000, color: "#0e7490" },
+  { id: "sunset", name: "Sunset Orange", price: 1000, color: "#c2410c" },
+  { id: "forest", name: "Forest Green", price: 1000, color: "#15803d" },
 ];
 
 export const THEME_COLORS: Record<
@@ -35,6 +36,22 @@ export const THEME_COLORS: Record<
   { light: Record<string, string>; dark: Record<string, string> }
 > = {
   default: {
+    light: {
+      "--color-primary": "#18181b",
+      "--color-primary-fg": "#fafafa",
+      "--color-secondary": "#f4f4f5",
+      "--color-secondary-fg": "#27272a",
+      "--color-accent": "#3b82f6",
+    },
+    dark: {
+      "--color-primary": "#fafafa",
+      "--color-primary-fg": "#18181b",
+      "--color-secondary": "#27272a",
+      "--color-secondary-fg": "#f4f4f5",
+      "--color-accent": "#60a5fa",
+    },
+  },
+  eco: {
     light: {
       "--color-primary": "#1a4d2e",
       "--color-primary-fg": "#f2f9f6",
@@ -102,6 +119,8 @@ export const THEME_COLORS: Record<
 
 export function getThemeClass(theme: ThemeOption) {
   switch (theme) {
+    case "eco":
+      return "theme-eco";
     case "ocean":
       return "theme-ocean";
     case "sunset":

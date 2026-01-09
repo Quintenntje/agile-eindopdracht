@@ -26,9 +26,17 @@ export type StoreItem = {
 export const STORE_THEMES: StoreItem[] = [
   {
     id: "default",
-    name: "Eco Nature",
-    description: "The default green theme",
+    name: "Classic",
+    description: "Clean black & white theme",
     price: 0,
+    type: "theme",
+    color: "#18181b",
+  },
+  {
+    id: "eco",
+    name: "Eco Nature",
+    description: "Nature-inspired green theme",
+    price: 1000,
     type: "theme",
     color: "#1a4d2e",
   },
@@ -36,7 +44,7 @@ export const STORE_THEMES: StoreItem[] = [
     id: "ocean",
     name: "Ocean Blue",
     description: "Cool ocean vibes",
-    price: 500,
+    price: 1000,
     type: "theme",
     color: "#0e7490",
   },
@@ -44,7 +52,7 @@ export const STORE_THEMES: StoreItem[] = [
     id: "sunset",
     name: "Sunset Orange",
     description: "Warm sunset colors",
-    price: 500,
+    price: 1000,
     type: "theme",
     color: "#c2410c",
   },
@@ -52,7 +60,7 @@ export const STORE_THEMES: StoreItem[] = [
     id: "forest",
     name: "Forest Green",
     description: "Deep forest aesthetics",
-    price: 500,
+    price: 1000,
     type: "theme",
     color: "#15803d",
   },
@@ -63,7 +71,7 @@ export const STORE_COUPONS: StoreItem[] = [
     id: "coupon_delhaize_5",
     name: "Delhaize €5 Voucher",
     description: "€5 off your next purchase at Delhaize",
-    price: 1000,
+    price: 25000,
     type: "coupon",
     discount: "€5",
   },
@@ -71,7 +79,7 @@ export const STORE_COUPONS: StoreItem[] = [
     id: "coupon_colruyt_10",
     name: "Colruyt €10 Voucher",
     description: "€10 off your next purchase at Colruyt",
-    price: 2000,
+    price: 50000,
     type: "coupon",
     discount: "€10",
   },
@@ -79,7 +87,7 @@ export const STORE_COUPONS: StoreItem[] = [
     id: "coupon_ah_15",
     name: "Albert Heijn €15 Voucher",
     description: "€15 off your next purchase at Albert Heijn",
-    price: 3000,
+    price: 75000,
     type: "coupon",
     discount: "€15",
   },
@@ -87,7 +95,7 @@ export const STORE_COUPONS: StoreItem[] = [
     id: "coupon_cinema_ticket",
     name: "Kinepolis Movie Ticket",
     description: "Free movie ticket at any Kinepolis cinema",
-    price: 5000,
+    price: 100000,
     type: "coupon",
     discount: "Free Ticket",
   },
@@ -97,6 +105,15 @@ type PurchasedItem = {
   itemId: string;
   purchaseDate: string;
   type: StoreItemType;
+  code?: string; // For coupons
+};
+
+type PurchasedCoupon = {
+  itemId: string;
+  name: string;
+  discount: string;
+  code: string;
+  purchaseDate: string;
 };
 
 type StoreContextType = {
@@ -104,13 +121,14 @@ type StoreContextType = {
   purchasedItems: PurchasedItem[];
   purchaseItem: (
     item: StoreItem
-  ) => Promise<{ success: boolean; message: string }>;
+  ) => Promise<{ success: boolean; message: string; code?: string }>;
   canAfford: (price: number) => boolean;
   refreshPoints: () => Promise<void>;
   loading: boolean;
   themes: StoreItem[];
   coupons: StoreItem[];
   isItemPurchased: (itemId: string) => boolean;
+  getPurchasedCoupons: () => PurchasedCoupon[];
 };
 
 const StoreContext = createContext<StoreContextType | undefined>(undefined);
@@ -210,9 +228,34 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return purchasedItems.some((item) => item.itemId === itemId);
   };
 
+  const generateCouponCode = (): string => {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let code = "";
+    for (let i = 0; i < 12; i++) {
+      if (i > 0 && i % 4 === 0) code += "-";
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+  };
+
+  const getPurchasedCoupons = (): PurchasedCoupon[] => {
+    return purchasedItems
+      .filter((item) => item.type === "coupon" && item.code)
+      .map((item) => {
+        const coupon = STORE_COUPONS.find((c) => c.id === item.itemId);
+        return {
+          itemId: item.itemId,
+          name: coupon?.name || "Coupon",
+          discount: coupon?.discount || "",
+          code: item.code!,
+          purchaseDate: item.purchaseDate,
+        };
+      });
+  };
+
   const purchaseItem = async (
     item: StoreItem
-  ): Promise<{ success: boolean; message: string }> => {
+  ): Promise<{ success: boolean; message: string; code?: string }> => {
     if (!user) {
       return {
         success: false,
@@ -259,11 +302,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       // Update local state
       setUserPoints(newPoints);
 
+      // Generate code for coupons
+      const couponCode = item.type === "coupon" ? generateCouponCode() : undefined;
+
       // Add to purchased items
       const newPurchase: PurchasedItem = {
         itemId: item.id,
         purchaseDate: new Date().toISOString(),
         type: item.type,
+        code: couponCode,
       };
 
       const updatedPurchases = [...purchasedItems, newPurchase];
@@ -274,8 +321,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         success: true,
         message:
           item.type === "coupon"
-            ? `Successfully redeemed ${item.name}! Check your email for the voucher code.`
+            ? `Successfully redeemed ${item.name}!`
             : `Successfully purchased ${item.name}!`,
+        code: couponCode,
       };
     } catch (err) {
       console.error("Purchase error:", err);
@@ -298,6 +346,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         themes: STORE_THEMES,
         coupons: STORE_COUPONS,
         isItemPurchased,
+        getPurchasedCoupons,
       }}
     >
       {children}

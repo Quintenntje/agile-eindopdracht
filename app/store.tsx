@@ -1,5 +1,6 @@
+import * as Clipboard from "expo-clipboard";
 import { router, useFocusEffect } from "expo-router";
-import { Check, Gift, Lock, Palette, Ticket, X } from "lucide-react-native";
+import { Check, Copy, Gift, Lock, Palette, Ticket, X } from "lucide-react-native";
 import { useCallback } from "react";
 import {
   ActivityIndicator,
@@ -25,7 +26,10 @@ export default function StoreScreen() {
     themes,
     coupons,
     isItemPurchased,
+    getPurchasedCoupons,
   } = useStore();
+
+  const purchasedCoupons = getPurchasedCoupons();
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -91,7 +95,7 @@ export default function StoreScreen() {
     if (!canAfford(item.price)) {
       Alert.alert(
         "Not Enough Points",
-        `You need ${item.price} points but only have ${userPoints} points.\n\nKeep reporting trash to earn more points!`,
+        `You need ${item.price.toLocaleString()} points but only have ${userPoints.toLocaleString()} points.\n\nKeep reporting trash to earn more points!`,
         [{ text: "OK" }]
       );
       return;
@@ -99,15 +103,25 @@ export default function StoreScreen() {
 
     Alert.alert(
       "Redeem Coupon",
-      `Do you want to redeem "${item.name}" for ${item.price} points?\n\nYour balance: ${userPoints} points\n\nNote: The coupon code will be sent to your email.`,
+      `Do you want to redeem "${item.name}" for ${item.price.toLocaleString()} points?\n\nYour balance: ${userPoints.toLocaleString()} points`,
       [
         { text: "Cancel", style: "cancel" },
         {
           text: "Redeem",
           onPress: async () => {
             const result = await purchaseItem(item);
-            if (result.success) {
-              Alert.alert("Coupon Redeemed! 🎉", result.message);
+            if (result.success && result.code) {
+              Alert.alert(
+                "Coupon Redeemed! 🎉",
+                `Your coupon code:\n\n${result.code}\n\nYou can view this code anytime in "My Coupons" below.`,
+                [
+                  {
+                    text: "Copy Code",
+                    onPress: () => Clipboard.setStringAsync(result.code!),
+                  },
+                  { text: "OK" },
+                ]
+              );
             } else {
               Alert.alert("Redemption Failed", result.message);
             }
@@ -115,6 +129,19 @@ export default function StoreScreen() {
         },
       ]
     );
+  };
+
+  const showCouponCode = (code: string, name: string) => {
+    Alert.alert(name, `Your coupon code:\n\n${code}`, [
+      {
+        text: "Copy Code",
+        onPress: () => {
+          Clipboard.setStringAsync(code);
+          Alert.alert("Copied!", "Code copied to clipboard");
+        },
+      },
+      { text: "OK" },
+    ]);
   };
 
   if (loading) {
@@ -185,6 +212,7 @@ export default function StoreScreen() {
         <View className="gap-3 mb-8">
           {themes.map((themeOption) => {
             const isPurchased =
+              themeOption.price === 0 ||
               purchasedThemes.includes(themeOption.id as any) ||
               isItemPurchased(themeOption.id);
             const isActive = currentTheme === themeOption.id;
@@ -368,13 +396,56 @@ export default function StoreScreen() {
           })}
         </View>
 
-        {/* Info Note */}
-        <View className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl mb-6">
-          <ThemedText className="text-blue-800 dark:text-blue-300 text-sm text-center">
-            💡 Earn points by reporting trash around Ghent. Each verified report
-            earns you 50 points!
-          </ThemedText>
-        </View>
+        {/* My Coupons Section */}
+        {purchasedCoupons.length > 0 && (
+          <>
+            <View className="flex-row items-center gap-2 mb-4">
+              <Gift size={20} color={isDark ? "#4ade80" : "#16a34a"} />
+              <ThemedText variant="subtitle" className="text-theme-primary">
+                My Coupons
+              </ThemedText>
+            </View>
+            <ThemedText className="mb-4 text-theme-primary/70 text-sm">
+              Tap on a coupon to view and copy the code.
+            </ThemedText>
+
+            <View className="gap-3 mb-8">
+              {purchasedCoupons.map((coupon, index) => (
+                <TouchableOpacity
+                  key={`${coupon.itemId}-${index}`}
+                  activeOpacity={0.8}
+                  onPress={() => showCouponCode(coupon.code, coupon.name)}
+                  className="p-4 rounded-2xl border-2 border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20"
+                >
+                  <View className="flex-row items-center">
+                    <View className="w-14 h-14 rounded-xl mr-4 items-center justify-center bg-green-500">
+                      <Check size={24} color="#ffffff" />
+                    </View>
+
+                    <View className="flex-1">
+                      <ThemedText
+                        variant="subtitle"
+                        className="mb-1 text-theme-primary text-base"
+                      >
+                        {coupon.name}
+                      </ThemedText>
+                      <View className="flex-row items-center bg-theme-secondary/50 dark:bg-theme-primary/20 rounded px-2 py-1 self-start">
+                        <ThemedText className="text-theme-primary font-plus-jakarta-sans-bold text-xs tracking-wider">
+                          {coupon.code}
+                        </ThemedText>
+                      </View>
+                    </View>
+
+                    <View className="p-2 rounded-full bg-green-100 dark:bg-green-800/30">
+                      <Copy size={18} color={isDark ? "#4ade80" : "#16a34a"} />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </>
+        )}
+
       </ScrollView>
     </View>
   );
