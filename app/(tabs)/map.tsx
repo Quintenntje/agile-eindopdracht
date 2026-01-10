@@ -10,7 +10,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import MapView, { Heatmap, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Button } from "../../components/Button";
 import { ThemedText } from "../../components/ThemedText";
 import { getThemeClass, useTheme } from "../../lib/contexts/ThemeContext";
@@ -204,17 +204,23 @@ export default function MapScreen() {
               pinColor="#10b981" // emerald-500
             />
           ))}
-          {reports.map((report) => (
-            <Marker
-              key={report.id}
-              coordinate={{
+          {/* Heatmap for Verified Reports */}
+          {reports.length > 0 && (
+            <Heatmap
+              points={reports.map((report) => ({
                 latitude: Number(report.lat),
                 longitude: Number(report.long),
+                weight: 1,
+              }))}
+              radius={50}
+              opacity={0.8}
+              gradient={{
+                colors: ["#4ade80", "#facc15", "#fb923c", "#ef4444"], // Green -> Yellow -> Orange -> Red
+                startPoints: [0.1, 0.4, 0.7, 1],
+                colorMapSize: 256,
               }}
-              title={report.location_name || "Trash Report"}
-              description={report.description || "No description"}
             />
-          ))}
+          )}
         </MapView>
       )}
 
