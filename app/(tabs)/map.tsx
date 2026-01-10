@@ -1,6 +1,6 @@
 import * as Location from "expo-location";
 import { router, useFocusEffect } from "expo-router";
-import { Plus } from "lucide-react-native";
+import { Plus, Trash2 } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -201,8 +201,11 @@ export default function MapScreen() {
               }}
               title={bin.location_name}
               description={bin.description}
-              pinColor="#10b981" // emerald-500
-            />
+            >
+              <View className="bg-emerald-500 p-2 rounded-full shadow-md">
+                <Trash2 size={20} color="#ffffff" />
+              </View>
+            </Marker>
           ))}
           {/* Heatmap for Verified Reports */}
           {reports.length > 0 && (
