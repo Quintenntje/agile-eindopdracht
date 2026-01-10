@@ -14,6 +14,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { Button } from "../../components/Button";
 import { ThemedText } from "../../components/ThemedText";
 import { getThemeClass, useTheme } from "../../lib/contexts/ThemeContext";
+import { TRASH_BINS } from "../../lib/data/trash_bins";
 import { supabase } from "../../lib/utils/supabase";
 
 type TrashReport = {
@@ -153,6 +154,30 @@ export default function MapScreen() {
               </View>
             )}
           </View>
+
+          <View className="mt-4 px-4">
+            <ThemedText variant="subtitle" className="text-theme-primary mb-2">
+              Public Bins: {TRASH_BINS.length}
+            </ThemedText>
+            <View className="mt-2">
+              {TRASH_BINS.slice(0, 5).map((bin) => (
+                <View
+                  key={bin.id}
+                  className="mb-2 p-3 bg-theme-secondary dark:bg-theme-primary/20 rounded-lg"
+                >
+                  <ThemedText className="font-semibold text-theme-primary">
+                    {bin.location_name}
+                  </ThemedText>
+                  <ThemedText
+                    variant="caption"
+                    className="text-theme-primary/70 mt-1"
+                  >
+                    {bin.description}
+                  </ThemedText>
+                </View>
+              ))}
+            </View>
+          </View>
         </View>
       ) : (
         <MapView
@@ -167,6 +192,18 @@ export default function MapScreen() {
             longitudeDelta: 0.01,
           }}
         >
+          {TRASH_BINS.map((bin) => (
+            <Marker
+              key={bin.id}
+              coordinate={{
+                latitude: bin.lat,
+                longitude: bin.long,
+              }}
+              title={bin.location_name}
+              description={bin.description}
+              pinColor="#10b981" // emerald-500
+            />
+          ))}
           {reports.map((report) => (
             <Marker
               key={report.id}
