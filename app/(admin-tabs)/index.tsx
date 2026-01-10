@@ -98,44 +98,13 @@ export default function AdminReportsScreen() {
       }
 
       // Update report status
+      // Note: The database trigger will automatically award 10 points and update challenges
       const { error } = await supabase
         .from("recorded_trash")
         .update({ status: newStatus })
         .eq("id", id);
 
       if (error) throw error;
-
-      // If verified, award points to the user
-      if (newStatus === "verified" && report.user_id) {
-        // First, get current points
-        const { data: currentPoints } = await supabase
-          .from("user_points")
-          .select("total_points")
-          .eq("user_id", report.user_id)
-          .single();
-
-        const newTotalPoints =
-          (currentPoints?.total_points || 0) + POINTS_PER_VERIFIED_REPORT;
-
-        // Upsert (insert or update) user points
-        const { error: pointsError } = await supabase
-          .from("user_points")
-          .upsert(
-            {
-              user_id: report.user_id,
-              total_points: newTotalPoints,
-              updated_at: new Date().toISOString(),
-            },
-            {
-              onConflict: "user_id",
-            }
-          );
-
-        if (pointsError) {
-          console.error("Error awarding points:", pointsError);
-          // Don't throw - report was still verified
-        }
-      }
 
       // Update local state
       setReports(

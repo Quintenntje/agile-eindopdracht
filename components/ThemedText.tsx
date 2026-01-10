@@ -25,7 +25,7 @@ export function ThemedText({
       break;
     case "link":
       variantStyles =
-        "text-base font-plus-jakarta-sans text-blue-600 dark:text-blue-400 underline";
+        "text-base font-plus-jakarta-sans text-theme-accent underline";
       break;
     case "caption":
       variantStyles =

@@ -10,9 +10,10 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+import { ScreenContent } from "../components/ScreenContent";
 import { ThemedText } from "../components/ThemedText";
 import { StoreItem, useStore } from "../lib/contexts/StoreContext";
-import { getThemeClass, useTheme } from "../lib/contexts/ThemeContext";
+import { useTheme } from "../lib/contexts/ThemeContext";
 
 export default function StoreScreen() {
   const { theme: currentTheme, setTheme, purchasedThemes } = useTheme();
@@ -33,7 +34,6 @@ export default function StoreScreen() {
 
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
-  const themeClass = getThemeClass(currentTheme);
 
   // Refresh points when screen comes into focus
   useFocusEffect(
@@ -147,7 +147,7 @@ export default function StoreScreen() {
   if (loading) {
     return (
       <View
-        className={`flex-1 items-center justify-center bg-white dark:bg-theme-secondary ${themeClass}`}
+        className="flex-1 items-center justify-center bg-white dark:bg-theme-secondary"
       >
         <ActivityIndicator size="large" className="color-theme-primary" />
         <ThemedText className="mt-4 text-theme-primary">
@@ -158,8 +158,9 @@ export default function StoreScreen() {
   }
 
   return (
-    <View
-      className={`flex-1 bg-white dark:bg-theme-secondary pt-2 ${themeClass}`}
+    <ScreenContent
+      className="bg-white dark:bg-theme-secondary"
+      contentContainerStyle={{ padding: 0 }}
     >
       {/* Header */}
       <View className="p-4 flex-row justify-between items-center border-b border-theme-secondary dark:border-theme-primary/10 mt-8">
@@ -197,7 +198,7 @@ export default function StoreScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView className="flex-1 p-6">
+      <View className="p-6">
         {/* Themes Section */}
         <View className="flex-row items-center gap-2 mb-4">
           <Palette size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
@@ -446,7 +447,7 @@ export default function StoreScreen() {
           </>
         )}
 
-      </ScrollView>
-    </View>
+      </View>
+    </ScreenContent>
   );
 }

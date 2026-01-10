@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "agile-eindopdracht",
+    "name": "eco-clean",
     "slug": "agile-eindopdracht",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "agileeindopdracht",
+    "scheme": "eco-clean",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -18,10 +18,8 @@
         }
       },
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "backgroundColor": "#4ade80",
+        "foregroundImage": "./assets/images/adaptive-icon.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -40,9 +38,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#96CA64",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#96CA64"
           }
         }
       ],

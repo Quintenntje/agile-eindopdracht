@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import {
   Award,
   ChevronRight,
@@ -8,22 +8,77 @@ import {
   MapPin,
   Settings,
 } from "lucide-react-native";
-import { Alert, TouchableOpacity, useColorScheme, View } from "react-native";
+import { useCallback, useState } from "react";
+import { ActivityIndicator, Alert, TouchableOpacity, useColorScheme, View } from "react-native";
 import { ScreenContent } from "../../components/ScreenContent";
 import { ThemedText } from "../../components/ThemedText";
 import { useAuth } from "../../lib/contexts/AuthContext";
 import { supabase } from "../../lib/utils/supabase";
 
 export default function ProfileScreen() {
-  const { session } = useAuth();
+  const { session, user } = useAuth();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    points: 0,
+    reports: 0,
+    impact: "Low",
+  });
 
-  // Demo stats (would come from DB in real app)
-  const stats = [
-    { label: "Points", value: "1,250", icon: Award, color: "#f59e0b" }, // amber-500
-    { label: "Reports", value: "12", icon: FileText, color: "#3b82f6" }, // blue-500
-    { label: "Impact", value: "High", icon: MapPin, color: "#10b981" }, // emerald-500
+  const fetchStats = useCallback(async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Fetch points
+      const { data: pointsData } = await supabase
+        .from("user_points")
+        .select("total_points")
+        .eq("user_id", user.id)
+        .single();
+
+      const points = pointsData?.total_points || 0;
+
+      // Fetch verified reports count
+      const { count: reportsCount } = await supabase
+        .from("recorded_trash")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("status", "verified");
+
+      // Calculate impact level based on verified reports
+      const verifiedReports = reportsCount || 0;
+      let impact = "Low";
+      if (verifiedReports >= 100) impact = "Very High";
+      else if (verifiedReports >= 50) impact = "High";
+      else if (verifiedReports >= 25) impact = "Medium";
+      else if (verifiedReports >= 10) impact = "Low-Medium";
+
+      setStats({
+        points,
+        reports: verifiedReports,
+        impact,
+      });
+    } catch (error) {
+      console.error("Error fetching profile stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchStats();
+    }, [fetchStats])
+  );
+
+  const statsConfig = [
+    { label: "Points", value: stats.points.toLocaleString(), icon: Award, color: "#f59e0b" },
+    { label: "Reports", value: stats.reports.toString(), icon: FileText, color: "#3b82f6" },
+    { label: "Impact", value: stats.impact, icon: MapPin, color: "#10b981" },
   ];
 
   const handleLogout = async () => {
@@ -69,23 +124,29 @@ export default function ProfileScreen() {
 
       {/* Stats Grid */}
       <View className="flex-row justify-between px-6 py-8">
-        {stats.map((stat, index) => (
-          <View key={index} className="items-center flex-1">
-            <View
-              className="w-12 h-12 rounded-2xl items-center justify-center mb-2 bg-opacity-10"
-              style={{ backgroundColor: `${stat.color}20` }}
-            >
-              <stat.icon size={24} color={stat.color} />
-            </View>
-            <ThemedText
-              variant="subtitle"
-              className="font-plus-jakarta-sans-bold text-theme-primary"
-            >
-              {stat.value}
-            </ThemedText>
-            <ThemedText variant="caption">{stat.label}</ThemedText>
+        {loading ? (
+          <View className="flex-1 items-center">
+            <ActivityIndicator size="small" />
           </View>
-        ))}
+        ) : (
+          statsConfig.map((stat, index) => (
+            <View key={index} className="items-center flex-1">
+              <View
+                className="w-12 h-12 rounded-2xl items-center justify-center mb-2 bg-opacity-10"
+                style={{ backgroundColor: `${stat.color}20` }}
+              >
+                <stat.icon size={24} color={stat.color} />
+              </View>
+              <ThemedText
+                variant="subtitle"
+                className="font-plus-jakarta-sans-bold text-theme-primary"
+              >
+                {stat.value}
+              </ThemedText>
+              <ThemedText variant="caption">{stat.label}</ThemedText>
+            </View>
+          ))
+        )}
       </View>
 
       {/* Actions */}

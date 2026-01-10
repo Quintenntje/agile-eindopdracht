@@ -41,14 +41,14 @@ export const THEME_COLORS: Record<
       "--color-primary-fg": "#fafafa",
       "--color-secondary": "#f4f4f5",
       "--color-secondary-fg": "#27272a",
-      "--color-accent": "#3b82f6",
+      "--color-accent": "#96CA64",
     },
     dark: {
       "--color-primary": "#fafafa",
       "--color-primary-fg": "#18181b",
       "--color-secondary": "#27272a",
       "--color-secondary-fg": "#f4f4f5",
-      "--color-accent": "#60a5fa",
+      "--color-accent": "#96CA64",
     },
   },
   eco: {

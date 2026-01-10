@@ -29,8 +29,8 @@ export function Button({
 
   switch (variant) {
     case "primary":
-      baseStyles += " bg-theme-primary dark:bg-theme-accent";
-      textStyles += " text-theme-primary-fg dark:text-theme-primary-fg";
+      baseStyles += " bg-theme-accent";
+      textStyles += " text-theme-secondary-fg";
       break;
     case "secondary":
       baseStyles += " bg-theme-secondary dark:bg-theme-primary/20";
@@ -38,7 +38,7 @@ export function Button({
       break;
     case "outline":
       baseStyles +=
-        " border border-theme-secondary dark:border-theme-primary/20 bg-transparent";
+        " border border-theme-secondary-fg dark:border-theme-secondary-fg bg-transparent";
       textStyles += " text-theme-primary";
       break;
     case "ghost":
@@ -54,7 +54,7 @@ export function Button({
   // Determine ActivityIndicator color based on variant and theme
   const getActivityIndicatorColor = () => {
     if (variant === "primary") {
-      return isDark ? "#1a4d2e" : "#f2f9f6"; // theme-primary-fg inverted for dark
+      return isDark ? "#27272a" : "#f4f4f5"; // theme-secondary-fg
     }
     return isDark ? "#f2f9f6" : "#1a4d2e"; // theme-primary
   };

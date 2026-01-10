@@ -39,14 +39,13 @@ export default function HomeScreen() {
 
       const points = pointsData?.total_points || 0;
 
-      // Fetch rank (simple count of users with more points)
-      // Note: This is an estimation. Real app might use a materialized view or RPC.
-      const { count: rankCount } = await supabase
-        .from("user_points")
-        .select("*", { count: "exact", head: true })
-        .gt("total_points", points);
+      // Fetch rank using RPC function
+      const { data: rankData, error: rankError } = await supabase.rpc(
+        "get_user_rank",
+        { p_user_id: user.id }
+      );
 
-      const rank = (rankCount || 0) + 1;
+      const rank = rankError || rankData === null ? 1 : rankData;
 
       // Fetch total reports count
       const { count: reportsCount } = await supabase
