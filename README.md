@@ -2,6 +2,8 @@
 
 Een gamified mobiele applicatie voor het rapporteren en opruimen van zwerfafval in Gent. Gebruikers kunnen foto's maken van afval, deze reporteren en opruimen, punten verdienen en deelnemen aan community events.
 
+> **🔐 Admin Login**: `admin@admin.com` / `admin1234`
+
 ## ✨ Features
 
 - 📸 Afval rapporteren met foto/video en locatie
@@ -45,10 +47,7 @@ npx expo start --clear
 
 > **📱 Note**: Of test onze .apk die alles al werkend build-in heeft
 
-
-
-
-```
+```text
 app/
 ├── (tabs)/          # Gebruiker tabs (home, challenges, events, map, profile)
 ├── (admin-tabs)/    # Admin tabs (dashboard, events, users, map)
@@ -93,8 +92,7 @@ lib/
   "expo-image-picker": "~17.0.10",
   "expo-location": "~19.0.8",
   "@react-native-community/datetimepicker",
-  "@expo-video",
-
+  "@expo-video"
 }
 ```
 
@@ -120,4 +118,4 @@ Academisch project - Arteveldehogeschool
 
 ---
 
-**Gemaakt met ❤️ voor een schoner Gent**
+### **Gemaakt met ❤️ voor een schoner Gent**
