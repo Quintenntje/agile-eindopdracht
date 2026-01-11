@@ -56,7 +56,7 @@ export function Button({
     if (variant === "primary") {
       return isDark ? "#27272a" : "#f4f4f5"; // theme-secondary-fg
     }
-    return isDark ? "#f2f9f6" : "#1a4d2e"; // theme-primary
+    return isDark ? "#fafafa" : "#18181b"; // theme-primary (default theme)
   };
 
   return (

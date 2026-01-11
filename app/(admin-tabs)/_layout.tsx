@@ -1,5 +1,6 @@
 import { Tabs, router } from "expo-router";
 import {
+  Calendar,
   ClipboardList,
   Map as MapIcon,
   Plus,
@@ -85,6 +86,20 @@ export default function AdminTabLayout() {
               </View>
             </Pressable>
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="events"
+        options={{
+          title: "Events",
+          tabBarIcon: ({ color }) => <Calendar size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="create-event"
+        options={{
+          href: null,
+          title: "Create Event",
         }}
       />
       <Tabs.Screen

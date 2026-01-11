@@ -40,7 +40,7 @@ export function ChallengeCard({
     100
   );
 
-  const typeLabel = type === "one_time" ? "milestone" : type;
+  const typeLabel = type === "one_time" ? "mijlpaal" : type === "daily" ? "dagelijks" : type === "weekly" ? "wekelijks" : type;
 
   return (
     <View
@@ -55,23 +55,23 @@ export function ChallengeCard({
                 {typeLabel}
               </ThemedText>
               {type === "daily" && (
-                <Clock size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+                <Clock size={12} color={isDark ? "#fafafa" : "#18181b"} />
               )}
               {type === "weekly" && (
-                <Calendar size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+                <Calendar size={12} color={isDark ? "#fafafa" : "#18181b"} />
               )}
               {type === "one_time" && (
-                <Gift size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+                <Gift size={12} color={isDark ? "#fafafa" : "#18181b"} />
               )}
               {type !== "daily" && type !== "weekly" && type !== "one_time" && (
-                <Leaf size={12} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+                <Leaf size={12} color={isDark ? "#fafafa" : "#18181b"} />
               )}
             </View>
             {status === "claimed" && (
               <View className="flex-row items-center bg-theme-primary/20 dark:bg-theme-accent/30 px-2 py-0.5 rounded-full">
                 <Check size={10} color={isDark ? "#4ade80" : "#1a4d2e"} />
                 <ThemedText className="text-xs text-theme-primary dark:text-theme-accent font-plus-jakarta-sans-bold ml-1">
-                  Claimed
+                  Geclaimd
                 </ThemedText>
               </View>
             )}
@@ -104,7 +104,7 @@ export function ChallengeCard({
         </View>
         <View className="h-3 bg-theme-secondary dark:bg-theme-primary/20 rounded-full overflow-hidden">
           <View
-            className="h-full bg-theme-primary dark:bg-theme-accent rounded-full"
+            className="h-full bg-theme-accent dark:bg-theme-accent rounded-full"
             style={{ width: `${progressPercentage}%` }}
           />
         </View>
@@ -117,8 +117,8 @@ export function ChallengeCard({
           className="mt-4 bg-theme-accent py-3 rounded-xl items-center"
           activeOpacity={0.8}
         >
-          <ThemedText className="font-plus-jakarta-sans-bold text-white text-sm">
-            {isClaiming ? "Claiming..." : "Claim Reward"}
+          <ThemedText className="font-plus-jakarta-sans-bold text-theme-secondary-fg dark:text-theme-secondary-fg text-sm">
+            {isClaiming ? "Claimen..." : "Beloning Claimen"}
           </ThemedText>
         </TouchableOpacity>
       )}

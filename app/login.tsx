@@ -39,7 +39,7 @@ export default function LoginScreen() {
       });
 
       if (error) {
-        Alert.alert("Error", error.message);
+        Alert.alert("Fout", error.message);
         setIsLoading(false);
         return;
       }
@@ -47,7 +47,7 @@ export default function LoginScreen() {
       // Navigation will happen automatically via auth state change
       router.replace("/");
     } catch (_) {
-      Alert.alert("Error", "An unexpected error occurred");
+      Alert.alert("Fout", "Er is een onverwachte fout opgetreden");
       setIsLoading(false);
     }
   };
@@ -64,17 +64,17 @@ export default function LoginScreen() {
         <View className="flex-1 bg-white dark:bg-zinc-950 p-6 justify-center">
           <View className="mb-10">
             <ThemedText variant="title" className="mb-2">
-              Welcome back
+              Welkom terug
             </ThemedText>
             <ThemedText className="text-zinc-500 dark:text-zinc-400">
-              Sign in to continue cleaning up Ghent.
+              Log in om verder te gaan met het opruimen van Gent.
             </ThemedText>
           </View>
 
           <View className="mb-6">
             <Input
-              label="Email"
-              placeholder="name@example.com"
+              label="E-mail"
+              placeholder="naam@voorbeeld.com"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -89,7 +89,7 @@ export default function LoginScreen() {
             />
 
             <Button
-              label="Sign In"
+              label="Inloggen"
               onPress={handleLogin}
               isLoading={isLoading}
             />

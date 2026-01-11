@@ -117,10 +117,10 @@ export default function ChallengesScreen() {
     }
 
     if (data?.success) {
-      Alert.alert("Reward Claimed!", `You earned ${data.points_awarded} points!`);
+      Alert.alert("Beloning Geclaimd!", `Je hebt ${data.points_awarded} punten verdiend!`);
       fetchChallenges();
     } else {
-      Alert.alert("Error", data?.error || "Failed to claim reward");
+      Alert.alert("Fout", data?.error || "Beloning claimen mislukt");
     }
   };
 
@@ -140,10 +140,10 @@ export default function ChallengesScreen() {
   );
 
   const filters: { key: FilterType; label: string }[] = [
-    { key: "all", label: "All" },
-    { key: "daily", label: "Daily" },
-    { key: "weekly", label: "Weekly" },
-    { key: "one_time", label: "Milestone" },
+    { key: "all", label: "Alles" },
+    { key: "daily", label: "Dagelijks" },
+    { key: "weekly", label: "Wekelijks" },
+    { key: "one_time", label: "Mijlpaal" },
   ];
 
   if (loading) {
@@ -198,7 +198,7 @@ export default function ChallengesScreen() {
       {completedChallenges.length > 0 && (
         <>
           <ThemedText variant="subtitle" className="mb-4">
-            Ready to Claim
+            Klaar om te Claimen
           </ThemedText>
           {completedChallenges.map((challenge) => (
             <ChallengeCard
@@ -228,7 +228,7 @@ export default function ChallengesScreen() {
       {claimedChallenges.length > 0 && (
         <>
           <ThemedText variant="subtitle" className="mb-4 mt-4">
-            Claimed ({claimedChallenges.length})
+            Geclaimd ({claimedChallenges.length})
           </ThemedText>
           {claimedChallenges.map((challenge) => (
             <ChallengeCard key={challenge.id} {...challenge} />

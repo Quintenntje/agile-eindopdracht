@@ -23,7 +23,7 @@ export default function ProfileScreen() {
   const [stats, setStats] = useState({
     points: 0,
     reports: 0,
-    impact: "Low",
+    impact: "Laag",
   });
 
   const fetchStats = useCallback(async () => {
@@ -51,11 +51,11 @@ export default function ProfileScreen() {
 
       // Calculate impact level based on verified reports
       const verifiedReports = reportsCount || 0;
-      let impact = "Low";
-      if (verifiedReports >= 100) impact = "Very High";
-      else if (verifiedReports >= 50) impact = "High";
-      else if (verifiedReports >= 25) impact = "Medium";
-      else if (verifiedReports >= 10) impact = "Low-Medium";
+      let impact = "Laag";
+      if (verifiedReports >= 100) impact = "Zeer Hoog";
+      else if (verifiedReports >= 50) impact = "Hoog";
+      else if (verifiedReports >= 25) impact = "Gemiddeld";
+      else if (verifiedReports >= 10) impact = "Laag-Gemiddeld";
 
       setStats({
         points,
@@ -93,7 +93,7 @@ export default function ProfileScreen() {
 
   const userEmail = session?.user?.email || "user@example.com";
   // Attempt to get name from metadata, fallback to 'User'
-  const firstName = session?.user?.user_metadata?.first_name || "Citizen";
+  const firstName = session?.user?.user_metadata?.first_name || "Burger";
   const lastName = session?.user?.user_metadata?.last_name || "";
   const fullName = `${firstName} ${lastName}`.trim();
   const initials = firstName ? firstName[0].toUpperCase() : "U";
@@ -118,7 +118,7 @@ export default function ProfileScreen() {
         </ThemedText>
 
         <TouchableOpacity className="absolute top-12 right-6 p-2 bg-theme-secondary dark:bg-theme-primary/20 rounded-full">
-          <Settings size={20} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+          <Settings size={20} color={isDark ? "#fafafa" : "#18181b"} />
         </TouchableOpacity>
       </View>
 
@@ -165,13 +165,13 @@ export default function ProfileScreen() {
           </View>
           <View className="flex-1">
             <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary">
-              Rewards Store
+              Beloningen Winkel
             </ThemedText>
             <ThemedText variant="caption" className="text-theme-primary/60">
-              Themes & coupons
+              Thema's & coupons
             </ThemedText>
           </View>
-          <ChevronRight size={20} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+          <ChevronRight size={20} color={isDark ? "#fafafa" : "#18181b"} />
         </TouchableOpacity>
 
 
@@ -184,7 +184,7 @@ export default function ProfileScreen() {
           </View>
           <View className="flex-1">
             <ThemedText className="font-plus-jakarta-sans-medium text-red-600 dark:text-red-400">
-              Log Out
+              Uitloggen
             </ThemedText>
           </View>
         </TouchableOpacity>

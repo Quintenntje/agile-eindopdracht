@@ -69,7 +69,7 @@ export default function ReportScreen() {
         setAddress(`${addr.street} ${addr.streetNumber || ""}, ${addr.city}`);
       }
     } catch {
-      Alert.alert("Error fetching location");
+      Alert.alert("Fout bij ophalen locatie");
     } finally {
       setLoadingLocation(false);
     }
@@ -127,7 +127,7 @@ export default function ReportScreen() {
         if (type === "video") setAfterImageUri(null);
       }
     } catch {
-      Alert.alert("Error selecting media");
+      Alert.alert("Fout bij selecteren media");
     }
   };
 
@@ -157,27 +157,27 @@ export default function ReportScreen() {
 
   const showMediaPicker = () => {
     Alert.alert(
-      "Add Evidence",
-      "Choose how to capture evidence",
+      "Bewijs Toevoegen",
+      "Kies hoe je bewijs wilt vastleggen",
       [
         {
-          text: "Take Photo",
+          text: "Foto Maken",
           onPress: () => pickMedia("image"),
         },
         {
-          text: "Record Video",
+          text: "Video Opnemen",
           onPress: () => pickMedia("video"),
         },
         {
-          text: "Choose Photo from Library",
+          text: "Foto Uit Bibliotheek",
           onPress: () => pickFromLibrary("image"),
         },
         {
-          text: "Choose Video from Library",
+          text: "Video Uit Bibliotheek",
           onPress: () => pickFromLibrary("video"),
         },
         {
-          text: "Cancel",
+          text: "Annuleren",
           style: "cancel",
         },
       ],
@@ -187,17 +187,17 @@ export default function ReportScreen() {
 
   const handleSubmit = async () => {
     if (!user) {
-      Alert.alert("Error", "You must be logged in to submit a report");
+      Alert.alert("Fout", "Je moet ingelogd zijn om een rapport in te dienen");
       return;
     }
 
     if (!mediaUri) {
-      Alert.alert("Error", "Please take a picture or record a video");
+      Alert.alert("Fout", "Maak een foto of neem een video op");
       return;
     }
 
     if (mediaType === "image" && !afterImageUri) {
-      Alert.alert("Error", "Please provide a cleanup (after) photo");
+      Alert.alert("Fout", "Geef een opruimfoto (na) op");
       return;
     }
 
@@ -215,14 +215,14 @@ export default function ReportScreen() {
           };
         } else {
           Alert.alert(
-            "Error",
-            "Could not find location from address. Please try again or use current location."
+            "Fout",
+            "Locatie niet gevonden op basis van adres. Probeer het opnieuw of gebruik huidige locatie."
           );
           setIsSubmitting(false);
           return;
         }
       } catch {
-        Alert.alert("Error", "Failed to resolve address location.");
+        Alert.alert("Fout", "Adreslocatie oplossen mislukt.");
         setIsSubmitting(false);
         return;
       }
@@ -296,14 +296,14 @@ export default function ReportScreen() {
         throw error;
       }
 
-      Alert.alert("Success", "Report submitted successfully", [
+      Alert.alert("Succes", "Rapport succesvol ingediend", [
         {
           text: "OK",
           onPress: () => router.back(),
         },
       ]);
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to submit report");
+      Alert.alert("Fout", error.message || "Rapport indienen mislukt");
       setIsSubmitting(false);
     }
   };
@@ -326,7 +326,7 @@ export default function ReportScreen() {
           onPress={() => router.back()}
           className="p-2 bg-theme-secondary dark:bg-theme-primary/10 rounded-full"
         >
-          <X size={20} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+          <X size={20} color={isDark ? "#fafafa" : "#18181b"} />
         </Pressable>
       </View>
 
@@ -336,7 +336,7 @@ export default function ReportScreen() {
           variant="caption"
           className="mb-2 uppercase tracking-wider text-theme-primary/70"
         >
-          1. Before Evidence
+          1. Bewijs Voor
         </ThemedText>
 
         {mediaUri ? (
@@ -364,7 +364,7 @@ export default function ReportScreen() {
                 className="flex-1 bg-theme-secondary dark:bg-theme-primary/20 p-3 rounded-xl items-center"
               >
                 <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary text-sm">
-                  Retake
+                  Opnieuw
                 </ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
@@ -384,7 +384,7 @@ export default function ReportScreen() {
               onPress={showMediaPicker}
               className="flex-1 h-40 bg-theme-secondary/20 dark:bg-theme-primary/5 rounded-2xl items-center justify-center border-2 border-dashed border-theme-secondary dark:border-theme-primary/20"
             >
-              <Camera size={36} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+              <Camera size={36} color={isDark ? "#96CA64" : "#96CA64"} />
               <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium text-sm">
                 Add Media
               </ThemedText>
@@ -399,7 +399,7 @@ export default function ReportScreen() {
               variant="caption"
               className="mb-2 uppercase tracking-wider text-theme-primary/70"
             >
-              2. After Evidence (Required)
+              2. Bewijs Na (Verplicht)
             </ThemedText>
 
             {afterImageUri ? (
@@ -417,7 +417,7 @@ export default function ReportScreen() {
                     className="flex-1 bg-theme-secondary dark:bg-theme-primary/20 p-3 rounded-xl items-center"
                   >
                     <ThemedText className="font-plus-jakarta-sans-medium text-theme-primary text-sm">
-                      Retake
+                      Opnieuw
                     </ThemedText>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -439,7 +439,7 @@ export default function ReportScreen() {
                 >
                   <Camera size={24} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
                   <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium text-xs">
-                    Take Photo
+                    Foto Maken
                   </ThemedText>
                 </TouchableOpacity>
 
@@ -448,7 +448,7 @@ export default function ReportScreen() {
                   onPress={() => pickAfterImage("library")}
                   className="flex-1 h-40 bg-theme-secondary/20 dark:bg-theme-primary/5 rounded-2xl items-center justify-center border-2 border-dashed border-theme-secondary dark:border-theme-primary/20"
                 >
-                  <ImageIcon size={24} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+                  <ImageIcon size={24} color={isDark ? "#96CA64" : "#96CA64"} />
                   <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium text-xs">
                     From Library
                   </ThemedText>
@@ -463,7 +463,7 @@ export default function ReportScreen() {
           variant="caption"
           className="mb-2 uppercase tracking-wider text-theme-primary/70"
         >
-          Location
+          Locatie
         </ThemedText>
         <View className="mb-6">
           <Input
@@ -474,7 +474,7 @@ export default function ReportScreen() {
               if (coordinates) setCoordinates(null);
             }}
             placeholder={
-              loadingLocation ? "Locating..." : "Leeuwstraat 1, Gent"
+              loadingLocation ? "Locatie bepalen..." : "Leeuwstraat 1, Gent"
             }
             className="mb-3 bg-theme-secondary/20 dark:bg-theme-primary/10 border-theme-secondary dark:border-theme-primary/10 text-theme-primary"
           />
@@ -486,7 +486,7 @@ export default function ReportScreen() {
             {loadingLocation ? (
               <ActivityIndicator
                 size="small"
-                color={isDark ? "#e8f3ee" : "#1a4d2e"}
+                color={isDark ? "#96CA64" : "#96CA64"}
               />
             ) : (
               <>
@@ -509,7 +509,7 @@ export default function ReportScreen() {
         <Input
           value={description}
           onChangeText={setDescription}
-          placeholder="Describe the trash (optional)"
+          placeholder="Beschrijf het afval (optioneel)"
           multiline
           numberOfLines={3}
           className="h-24 py-3 align-top bg-theme-secondary/20 dark:bg-theme-primary/10 border-theme-secondary dark:border-theme-primary/10 text-theme-primary"
@@ -519,7 +519,7 @@ export default function ReportScreen() {
 
       <View className="p-4 border-t border-theme-secondary dark:border-theme-primary/10">
         <Button
-          label="Submit Report"
+          label="Rapport Indienen"
           onPress={handleSubmit}
           isLoading={isSubmitting}
           disabled={

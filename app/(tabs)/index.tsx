@@ -1,10 +1,18 @@
 import { router, useFocusEffect } from "expo-router";
-import { Camera, Map as MapIcon, Medal, Trophy } from "lucide-react-native";
+import {
+  Calendar,
+  Camera,
+  Map as MapIcon,
+  Medal,
+  Ticket,
+  Trophy,
+} from "lucide-react-native";
 import { useCallback, useState } from "react";
 import { TouchableOpacity, useColorScheme, View } from "react-native";
 import { ScreenContent } from "../../components/ScreenContent";
 import { ThemedText } from "../../components/ThemedText";
 import { useAuth } from "../../lib/contexts/AuthContext";
+import { Event } from "../../lib/types";
 import { supabase } from "../../lib/utils/supabase";
 
 export default function HomeScreen() {
@@ -17,6 +25,7 @@ export default function HomeScreen() {
     totalReports: 0,
   });
   const [pendingReports, setPendingReports] = useState<any[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Check metadata for admin role
@@ -24,7 +33,7 @@ export default function HomeScreen() {
     user?.user_metadata?.role === "admin" ||
     user?.app_metadata?.role === "admin";
 
-  const firstName = user?.user_metadata?.first_name || "Citizen";
+  const firstName = user?.user_metadata?.first_name || "Burger";
 
   const fetchUserData = useCallback(async () => {
     if (!user) return;
@@ -62,12 +71,31 @@ export default function HomeScreen() {
         .order("created_at", { ascending: false })
         .limit(5);
 
+      // Fetch upcoming joined events
+      const { data: participantsData } = await supabase
+        .from("event_participants")
+        .select("event:events(*)")
+        .eq("user_id", user.id)
+        .eq("status", "registered");
+
+      const now = new Date();
+      const validEvents = (participantsData || [])
+        // @ts-ignore
+        .map((p) => p.event as Event)
+        .filter((e) => e && new Date(e.event_date) > now)
+        .sort(
+          (a, b) =>
+            new Date(a.event_date).getTime() - new Date(b.event_date).getTime()
+        )
+        .slice(0, 3);
+
       setStats({
         points,
         rank,
         totalReports: reportsCount || 0,
       });
       setPendingReports(pendingData || []);
+      setUpcomingEvents(validEvents);
     } catch (error) {
       console.error("Error fetching home data:", error);
     } finally {
@@ -93,7 +121,7 @@ export default function HomeScreen() {
             {isAdmin && (
               <View className="bg-indigo-100 dark:bg-indigo-900/30 self-start px-3 py-1 rounded-full mb-2">
                 <ThemedText className="text-xs font-plus-jakarta-sans-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">
-                  Hi Admin
+                  Hallo Admin
                 </ThemedText>
               </View>
             )}
@@ -126,7 +154,7 @@ export default function HomeScreen() {
           <View className="flex-row items-center mb-1">
             <Trophy size={16} color={isDark ? "#e8f3ee" : "#18181b"} />
             <ThemedText className="text-zinc-500 dark:text-zinc-400 font-plus-jakarta-sans-medium text-xs uppercase tracking-wider ml-2">
-              Total Score
+              Totaal Score
             </ThemedText>
           </View>
           <View className="flex-row items-baseline">
@@ -167,10 +195,10 @@ export default function HomeScreen() {
             <Camera size={24} color={isDark ? "#818cf8" : "#4f46e5"} />
           </View>
           <ThemedText className="font-plus-jakarta-sans-bold text-zinc-900 dark:text-zinc-50">
-            Report Trash
+            Afval Rapporteren
           </ThemedText>
           <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400 text-center mt-1">
-            Earn 10 pts
+            Verdien 10 punten
           </ThemedText>
         </TouchableOpacity>
 
@@ -183,20 +211,95 @@ export default function HomeScreen() {
             <MapIcon size={24} color={isDark ? "#34d399" : "#10b981"} />
           </View>
           <ThemedText className="font-plus-jakarta-sans-bold text-zinc-900 dark:text-zinc-50">
-            View Map
+            Kaart Bekijken
           </ThemedText>
           <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400 text-center mt-1">
-            Find local spots
+            Vind lokale plekken
           </ThemedText>
         </TouchableOpacity>
+      </View>
+
+      {/* Upcoming Events Section */}
+      <View className="px-6 mt-8">
+        <View className="flex-row justify-between items-center mb-4">
+          <ThemedText variant="subtitle" className="text-theme-primary">My Upcoming Events</ThemedText>
+          {upcomingEvents.length > 0 && (
+            <TouchableOpacity onPress={() => router.push("/(tabs)/events")}>
+              <ThemedText className="text-theme-accent dark:text-theme-accent text-sm font-plus-jakarta-sans-bold">
+                View All
+              </ThemedText>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {upcomingEvents.length > 0 ? (
+          upcomingEvents.map((event) => (
+            <TouchableOpacity
+              key={event.id}
+              activeOpacity={0.7}
+              onPress={() => router.push(`/event/${event.id}`)}
+              className="flex-row items-center py-3 border-b border-theme-secondary dark:border-theme-primary/20 last:border-0"
+            >
+              <View className="w-12 h-12 bg-theme-accent/10 dark:bg-theme-accent/20 rounded-xl items-center justify-center mr-3 border border-theme-accent/20 dark:border-theme-accent/30">
+                <ThemedText className="text-xs font-plus-jakarta-sans-bold text-theme-accent dark:text-theme-accent uppercase">
+                  {new Date(event.event_date).toLocaleDateString(undefined, {
+                    month: "short",
+                  })}
+                </ThemedText>
+                <ThemedText className="text-lg font-plus-jakarta-sans-bold text-theme-accent dark:text-theme-accent">
+                  {new Date(event.event_date).getDate()}
+                </ThemedText>
+              </View>
+              <View className="flex-1">
+                <ThemedText
+                  className="font-plus-jakarta-sans-bold text-theme-primary text-base"
+                  numberOfLines={1}
+                >
+                  {event.title}
+                </ThemedText>
+                <View className="flex-row items-center mt-0.5">
+                  <ThemedText
+                    className="text-xs text-theme-primary/70 dark:text-theme-primary/60 flex-1"
+                    numberOfLines={1}
+                  >
+                    {new Date(event.event_date).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}{" "}
+                    • {event.location_name}
+                  </ThemedText>
+                </View>
+              </View>
+              <View className="bg-theme-accent/20 dark:bg-theme-accent/30 p-2 rounded-full">
+                <Ticket size={16} color={isDark ? "#96CA64" : "#96CA64"} />
+              </View>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <View className="bg-theme-secondary/50 dark:bg-theme-primary/10 p-6 rounded-2xl items-center border border-theme-secondary dark:border-theme-primary/20">
+            <Calendar
+              size={32}
+              color={isDark ? "#96CA64" : "#96CA64"}
+              className="mb-3 opacity-50"
+            />
+            <ThemedText className="text-theme-primary/70 dark:text-theme-primary/60 text-center mb-2">
+              Geen aankomende evenementen
+            </ThemedText>
+            <TouchableOpacity onPress={() => router.push("/(tabs)/events")}>
+              <ThemedText className="text-theme-accent dark:text-theme-accent font-plus-jakarta-sans-bold text-sm">
+                Zoek evenementen om mee te doen
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       {/* Pending Reports Section */}
       <View className="px-6 mt-8 mb-8">
         <View className="flex-row justify-between items-center mb-4">
-          <ThemedText variant="subtitle">Pending Reports</ThemedText>
+          <ThemedText variant="subtitle">In Afwachting Rapporten</ThemedText>
           <ThemedText className="text-zinc-500 dark:text-zinc-400 text-sm">
-            {pendingReports.length} Pending
+            {pendingReports.length} In afwachting
           </ThemedText>
         </View>
 
@@ -214,11 +317,10 @@ export default function HomeScreen() {
                   className="font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-50"
                   numberOfLines={1}
                 >
-                  {report.location_name || report.description || "Trash Report"}
+                  {report.location_name || report.description || "Afval Rapport"}
                 </ThemedText>
                 <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400">
-                  {new Date(report.created_at).toLocaleDateString()} • Pending
-                  verification
+                  {new Date(report.created_at).toLocaleDateString()} • In afwachting van verificatie
                 </ThemedText>
               </View>
               <View className="bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded">
@@ -231,10 +333,10 @@ export default function HomeScreen() {
         ) : (
           <View className="bg-zinc-50 dark:bg-zinc-900 p-6 rounded-2xl items-center border border-zinc-100 dark:border-zinc-800">
             <ThemedText className="text-zinc-500 dark:text-zinc-400 text-center mb-2">
-              No pending reports
+              Geen rapporten in afwachting
             </ThemedText>
             <ThemedText className="text-xs text-zinc-400 dark:text-zinc-500 text-center">
-              Great job! All your reports have been processed.
+              Goed gedaan! Alle je rapporten zijn verwerkt.
             </ThemedText>
           </View>
         )}

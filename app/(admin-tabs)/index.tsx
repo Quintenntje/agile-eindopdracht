@@ -1,5 +1,5 @@
-import { AVPlaybackStatus, ResizeMode, Video } from "expo-av";
 import { router } from "expo-router";
+import { useVideoPlayer, VideoView } from "expo-video";
 import {
   Calendar,
   Check,
@@ -7,11 +7,10 @@ import {
   Film,
   LogOut,
   MapPin,
-  Pause,
   Play,
   X,
 } from "lucide-react-native";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -19,8 +18,8 @@ import {
   RefreshControl,
   ScrollView,
   TouchableOpacity,
-  View,
   useColorScheme,
+  View,
 } from "react-native";
 import { ScreenContent } from "../../components/ScreenContent";
 import { ThemedText } from "../../components/ThemedText";
@@ -43,6 +42,44 @@ type TrashReport = {
 
 const POINTS_PER_VERIFIED_REPORT = 10;
 
+// Sub-component for rendering video thumbnail in list
+const VideoThumbnail = ({ uri }: { uri: string }) => {
+  const player = useVideoPlayer(uri, (player) => {
+    player.muted = true;
+    player.loop = false;
+  });
+
+  return (
+    <View className="w-full h-full relative">
+      <VideoView
+        player={player}
+        style={{ width: "100%", height: "100%", position: "absolute" }}
+        contentFit="cover"
+        nativeControls={false}
+      />
+      {/* Overlay to darken slightly if needed, or just let it sit */}
+    </View>
+  );
+};
+
+// Sub-component for the Modal Video Player
+const ModalVideoPlayer = ({ uri }: { uri: string }) => {
+  const { width: screenWidth } = Dimensions.get("window");
+  const player = useVideoPlayer(uri, (player) => {
+    player.loop = false;
+    player.play(); // Auto play when modal opens
+  });
+
+  return (
+    <VideoView
+      player={player}
+      style={{ width: screenWidth, height: screenWidth * (3 / 4) }}
+      contentFit="contain"
+      nativeControls={true}
+    />
+  );
+};
+
 export default function AdminReportsScreen() {
   const [reports, setReports] = useState<TrashReport[]>([]);
   const [activeTab, setActiveTab] = useState<
@@ -54,8 +91,7 @@ export default function AdminReportsScreen() {
   const [activeMediaType, setActiveMediaType] = useState<"image" | "video">(
     "image"
   );
-  const [isPlaying, setIsPlaying] = useState(false);
-  const videoRef = useRef<Video>(null);
+
   const { signOut } = useAuth();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -98,7 +134,6 @@ export default function AdminReportsScreen() {
       }
 
       // Update report status
-      // Note: The database trigger will automatically award 10 points and update challenges
       const { error } = await supabase
         .from("recorded_trash")
         .update({ status: newStatus })
@@ -120,29 +155,11 @@ export default function AdminReportsScreen() {
     setActiveMediaUrl(url);
     setActiveMediaType(type);
     setMediaModalVisible(true);
-    if (type === "video") setIsPlaying(true);
   };
 
   const closeMediaViewer = () => {
     setMediaModalVisible(false);
     setActiveMediaUrl(null);
-    setIsPlaying(false);
-  };
-
-  const handlePlaybackStatusUpdate = (status: AVPlaybackStatus) => {
-    if (status.isLoaded) {
-      setIsPlaying(status.isPlaying);
-    }
-  };
-
-  const togglePlayPause = async () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        await videoRef.current.pauseAsync();
-      } else {
-        await videoRef.current.playAsync();
-      }
-    }
   };
 
   // Helper function to determine if media is video
@@ -202,24 +219,14 @@ export default function AdminReportsScreen() {
           {/* Before Image */}
           <View className="flex-1">
             <ThemedText className="text-xs mb-2 font-plus-jakarta-sans-bold text-zinc-500 uppercase">
-              Before
+              Voor
             </ThemedText>
             {isVideo ? (
               <TouchableOpacity
                 onPress={() => openMediaViewer(report.image, "video")}
                 className="w-full h-40 rounded-xl bg-zinc-100 dark:bg-zinc-800 items-center justify-center relative overflow-hidden"
               >
-                <Video
-                  source={{ uri: report.image }}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    position: "absolute",
-                  }}
-                  resizeMode={ResizeMode.COVER}
-                  shouldPlay={false}
-                  isMuted={true}
-                />
+                <VideoThumbnail uri={report.image} />
                 <View className="absolute inset-0 bg-black/30 items-center justify-center">
                   <Play size={20} color="#fff" style={{ marginLeft: 2 }} />
                 </View>
@@ -263,13 +270,8 @@ export default function AdminReportsScreen() {
           className="w-full h-48 rounded-xl bg-zinc-100 dark:bg-zinc-800 items-center justify-center relative overflow-hidden"
         >
           {/* Video thumbnail */}
-          <Video
-            source={{ uri: report.image }}
-            style={{ width: "100%", height: "100%", position: "absolute" }}
-            resizeMode={ResizeMode.COVER}
-            shouldPlay={false}
-            isMuted={true}
-          />
+          <VideoThumbnail uri={report.image} />
+
           {/* Play overlay */}
           <View className="absolute inset-0 bg-black/30 items-center justify-center">
             <View className="w-16 h-16 bg-white/90 rounded-full items-center justify-center">
@@ -315,7 +317,7 @@ export default function AdminReportsScreen() {
         >
           <LogOut size={14} color={isDark ? "#f87171" : "#ef4444"} />
           <ThemedText className="text-red-600 dark:text-red-400 font-plus-jakarta-sans-bold text-xs uppercase">
-            Exit
+            Afsluiten
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -344,7 +346,7 @@ export default function AdminReportsScreen() {
               <ClipboardList size={32} color={isDark ? "#71717a" : "#9ca3af"} />
             </View>
             <ThemedText className="text-zinc-500 font-plus-jakarta-sans-medium">
-              No {activeTab} reports found
+              Geen {activeTab === "pending" ? "in afwachting" : activeTab === "verified" ? "geverifieerde" : "afgewezen"} rapporten gevonden
             </ThemedText>
           </View>
         ) : (
@@ -367,7 +369,7 @@ export default function AdminReportsScreen() {
                           className="font-plus-jakarta-sans-bold text-sm text-zinc-900 dark:text-zinc-100"
                           numberOfLines={1}
                         >
-                          {report.location_name || "Pinned Location"}
+                          {report.location_name || "Gepinde Locatie"}
                         </ThemedText>
                       </View>
                       <ThemedText className="text-[11px] text-zinc-400 pl-5 font-mono">
@@ -376,7 +378,7 @@ export default function AdminReportsScreen() {
                         report.long !== undefined &&
                         report.long !== null
                           ? `${report.lat.toFixed(6)}, ${report.long.toFixed(6)}`
-                          : "Location not available"}
+                          : "Locatie niet beschikbaar"}
                       </ThemedText>
                     </View>
 
@@ -419,7 +421,7 @@ export default function AdminReportsScreen() {
                       >
                         <X size={18} color="#ef4444" />
                         <ThemedText className="font-plus-jakarta-sans-bold text-red-700 dark:text-red-400">
-                          Decline
+                          Afwijzen
                         </ThemedText>
                       </TouchableOpacity>
                     </View>
@@ -477,16 +479,7 @@ export default function AdminReportsScreen() {
           {activeMediaUrl && (
             <>
               {activeMediaType === "video" ? (
-                <Video
-                  ref={videoRef}
-                  source={{ uri: activeMediaUrl }}
-                  style={{ width: screenWidth, height: screenWidth * (3 / 4) }}
-                  useNativeControls
-                  resizeMode={ResizeMode.CONTAIN}
-                  shouldPlay={true}
-                  isLooping={false}
-                  onPlaybackStatusUpdate={handlePlaybackStatusUpdate}
-                />
+                <ModalVideoPlayer uri={activeMediaUrl} />
               ) : (
                 <Image
                   source={{ uri: activeMediaUrl }}
@@ -497,23 +490,9 @@ export default function AdminReportsScreen() {
             </>
           )}
 
-          {/* Custom play/pause button (Only for video) */}
-          {activeMediaType === "video" && (
-            <TouchableOpacity
-              onPress={togglePlayPause}
-              className="mt-8 w-16 h-16 bg-white/20 rounded-full items-center justify-center"
-            >
-              {isPlaying ? (
-                <Pause size={32} color="#fff" />
-              ) : (
-                <Play size={32} color="#fff" style={{ marginLeft: 4 }} />
-              )}
-            </TouchableOpacity>
-          )}
-
           {activeMediaType === "video" && (
             <ThemedText className="text-white/70 mt-4 text-sm">
-              Tap controls to play/pause
+              Native controls enabled
             </ThemedText>
           )}
         </View>

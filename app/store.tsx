@@ -65,24 +65,24 @@ export default function StoreScreen() {
     }
 
     Alert.alert(
-      "Purchase Theme",
-      `Do you want to buy "${item.name}" for ${item.price} points?\n\nYour balance: ${userPoints} points`,
+      "Thema Kopen",
+      `Wil je "${item.name}" kopen voor ${item.price} punten?\n\nJe saldo: ${userPoints} punten`,
       [
-        { text: "Cancel", style: "cancel" },
+        { text: "Annuleren", style: "cancel" },
         {
-          text: "Buy",
+          text: "Kopen",
           onPress: async () => {
             const result = await purchaseItem(item);
             if (result.success) {
-              Alert.alert("Success!", result.message, [
+              Alert.alert("Succes!", result.message, [
                 {
-                  text: "Activate Now",
+                  text: "Nu Activeren",
                   onPress: () => setTheme(item.id as any),
                 },
                 { text: "Later" },
               ]);
             } else {
-              Alert.alert("Purchase Failed", result.message);
+              Alert.alert("Aankoop Mislukt", result.message);
             }
           },
         },
@@ -102,28 +102,28 @@ export default function StoreScreen() {
     }
 
     Alert.alert(
-      "Redeem Coupon",
-      `Do you want to redeem "${item.name}" for ${item.price.toLocaleString()} points?\n\nYour balance: ${userPoints.toLocaleString()} points`,
+      "Coupon Inwisselen",
+      `Wil je "${item.name}" inwisselen voor ${item.price.toLocaleString()} punten?\n\nJe saldo: ${userPoints.toLocaleString()} punten`,
       [
-        { text: "Cancel", style: "cancel" },
+        { text: "Annuleren", style: "cancel" },
         {
-          text: "Redeem",
+          text: "Inwisselen",
           onPress: async () => {
             const result = await purchaseItem(item);
             if (result.success && result.code) {
               Alert.alert(
-                "Coupon Redeemed! 🎉",
-                `Your coupon code:\n\n${result.code}\n\nYou can view this code anytime in "My Coupons" below.`,
+                "Coupon Ingewisseld! 🎉",
+                `Je couponcode:\n\n${result.code}\n\nJe kunt deze code altijd bekijken in "Mijn Coupons" hieronder.`,
                 [
                   {
-                    text: "Copy Code",
+                    text: "Code Kopiëren",
                     onPress: () => Clipboard.setStringAsync(result.code!),
                   },
                   { text: "OK" },
                 ]
               );
             } else {
-              Alert.alert("Redemption Failed", result.message);
+              Alert.alert("Inwisselen Mislukt", result.message);
             }
           },
         },
@@ -151,7 +151,7 @@ export default function StoreScreen() {
       >
         <ActivityIndicator size="large" className="color-theme-primary" />
         <ThemedText className="mt-4 text-theme-primary">
-          Loading store...
+          Winkel laden...
         </ThemedText>
       </View>
     );
@@ -165,16 +165,16 @@ export default function StoreScreen() {
       {/* Header */}
       <View className="p-4 flex-row justify-between items-center border-b border-theme-secondary dark:border-theme-primary/10 mt-8">
         <View className="flex-row items-center gap-2">
-          <Gift size={24} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+          <Gift size={24} color={isDark ? "#96CA64" : "#96CA64"} />
           <ThemedText variant="subtitle" className="text-theme-primary">
-            Rewards Store
+            Beloningen Winkel
           </ThemedText>
         </View>
         <TouchableOpacity
           onPress={() => router.back()}
           className="p-2 bg-theme-secondary dark:bg-theme-primary/20 rounded-full"
         >
-          <X size={20} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
+          <X size={20} color={isDark ? "#fafafa" : "#18181b"} />
         </TouchableOpacity>
       </View>
 
@@ -193,7 +193,7 @@ export default function StoreScreen() {
           className="bg-theme-primary dark:bg-theme-accent px-4 py-2 rounded-full"
         >
           <ThemedText className="text-white dark:text-theme-secondary font-plus-jakarta-sans-bold text-sm">
-            Refresh
+            Vernieuwen
           </ThemedText>
         </TouchableOpacity>
       </View>
@@ -254,7 +254,7 @@ export default function StoreScreen() {
 
                   {isPurchased ? (
                     <ThemedText className="text-theme-primary/60 text-sm">
-                      {isActive ? "Active" : "Owned"}
+                      {isActive ? "Actief" : "In bezit"}
                     </ThemedText>
                   ) : (
                     <View className="flex-row items-center">
@@ -306,13 +306,13 @@ export default function StoreScreen() {
 
         {/* Coupons Section */}
         <View className="flex-row items-center gap-2 mb-4">
-          <Ticket size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
+          <Ticket size={20} color={isDark ? "#96CA64" : "#96CA64"} />
           <ThemedText variant="subtitle" className="text-theme-primary">
-            Coupon Codes
+            Couponcodes
           </ThemedText>
         </View>
         <ThemedText className="mb-4 text-theme-primary/70 text-sm">
-          Redeem your points for real-world rewards and discounts.
+          Wissel je punten in voor echte beloningen en kortingen.
         </ThemedText>
 
         <View className="gap-3 mb-8">
@@ -401,13 +401,13 @@ export default function StoreScreen() {
         {purchasedCoupons.length > 0 && (
           <>
             <View className="flex-row items-center gap-2 mb-4">
-              <Gift size={20} color={isDark ? "#4ade80" : "#16a34a"} />
+              <Gift size={20} color={isDark ? "#96CA64" : "#96CA64"} />
               <ThemedText variant="subtitle" className="text-theme-primary">
-                My Coupons
+                Mijn Coupons
               </ThemedText>
             </View>
             <ThemedText className="mb-4 text-theme-primary/70 text-sm">
-              Tap on a coupon to view and copy the code.
+              Tik op een coupon om de code te bekijken en te kopiëren.
             </ThemedText>
 
             <View className="gap-3 mb-8">
@@ -438,7 +438,7 @@ export default function StoreScreen() {
                     </View>
 
                     <View className="p-2 rounded-full bg-green-100 dark:bg-green-800/30">
-                      <Copy size={18} color={isDark ? "#4ade80" : "#16a34a"} />
+                      <Copy size={18} color={isDark ? "#96CA64" : "#96CA64"} />
                     </View>
                   </View>
                 </TouchableOpacity>

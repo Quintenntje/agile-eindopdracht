@@ -60,7 +60,7 @@ export default function RegisterScreen() {
       });
 
       if (error) {
-        Alert.alert("Error", error.message);
+        Alert.alert("Fout", error.message);
         setIsLoading(false);
         return;
       }
@@ -88,7 +88,7 @@ export default function RegisterScreen() {
       // Navigation will happen automatically via auth state change
       router.replace("/");
     } catch (error) {
-      Alert.alert("Error", "An unexpected error occurred");
+      Alert.alert("Fout", "Er is een onverwachte fout opgetreden");
       setIsLoading(false);
     }
   };
@@ -105,10 +105,10 @@ export default function RegisterScreen() {
         <View className="flex-1 bg-white dark:bg-zinc-950 p-6 justify-center">
           <View className="mb-8">
             <ThemedText variant="title" className="mb-2">
-              Create account
+              Account aanmaken
             </ThemedText>
             <ThemedText className="text-zinc-500 dark:text-zinc-400">
-              Join the community and start making an impact.
+              Word lid van de community en begin impact te maken.
             </ThemedText>
           </View>
 
@@ -116,8 +116,8 @@ export default function RegisterScreen() {
             <View className="flex-row gap-4 mb-0">
               <View className="flex-1">
                 <Input
-                  label="First Name"
-                  placeholder="John"
+                  label="Voornaam"
+                  placeholder="Jan"
                   value={firstName}
                   onChangeText={setFirstName}
                 />
@@ -133,8 +133,8 @@ export default function RegisterScreen() {
             </View>
 
             <Input
-              label="Email"
-              placeholder="name@example.com"
+              label="E-mail"
+              placeholder="naam@voorbeeld.com"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -148,7 +148,7 @@ export default function RegisterScreen() {
               secureTextEntry
             />
             <Input
-              label="Confirm Password"
+              label="Bevestig wachtwoord"
               placeholder="••••••••"
               value={confirmPassword}
               onChangeText={setConfirmPassword}
@@ -165,10 +165,10 @@ export default function RegisterScreen() {
 
           <View className="flex-row justify-center mt-4 mb-8">
             <ThemedText className="text-zinc-500 dark:text-zinc-400 mr-1">
-              Already have an account?
+              Heb je al een account?
             </ThemedText>
             <Link href="/login" asChild>
-              <ThemedText variant="link">Sign In</ThemedText>
+              <ThemedText variant="link">Inloggen</ThemedText>
             </Link>
           </View>
         </View>

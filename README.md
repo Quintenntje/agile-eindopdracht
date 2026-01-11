@@ -1,50 +1,123 @@
-# Welcome to your Expo app 👋
+# Eco Clean - Gent Opruim App 🗑️🌱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Een gamified mobiele applicatie voor het rapporteren en opruimen van zwerfafval in Gent. Gebruikers kunnen foto's maken van afval, deze reporteren en opruimen, punten verdienen en deelnemen aan community events.
 
-## Get started
+## ✨ Features
 
-1. Install dependencies
+- 📸 Afval rapporteren met foto/video en locatie
+- 🗺️ Interactieve kaart met afvalrapporten en events
+- 🏆 Challenges (dagelijks, wekelijks, milestones)
+- 📊 Leaderboard met top gebruikers
+- 🎁 Rewards store (thema's en coupons)
+- 📅 Events systeem
+- 👤 Gebruikersprofiel met statistieken
+- ✅ Admin dashboard voor rapport verificatie en events beheren
 
-   ```bash
-   npm install
-   ```
+## 🛠️ Tech Stack
 
-2. Start the app
+- **Frontend**: React Native (Expo), TypeScript, NativeWind
+- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Maps**: React Native Maps (Google Maps)
+- **Routing**: Expo Router
 
-   ```bash
-   npx expo start
-   ```
+## 🚀 Setup
 
-In the output, you'll find options to open the app in a
+### Vereisten
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js v18+
+- Expo CLI
+- Supabase account
+- Google Maps API key
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Installatie
 
 ```bash
-npm run reset-project
+# Dependencies installeren
+npm install
+
+# Environment variabelen configureren (.env)
+EXPO_PUBLIC_SUPABASE_URL=https://kkmrvkdpmaroppcsctgn.supabase.co
+EXPO_PUBLIC_SUPABASE_KEY=sb_publishable_5OQAuZmBji6EAqYhcj5QCA_iomAsYUV
+
+# App starten
+npx expo start --clear
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+> **📱 Note**: Of test onze .apk die alles al werkend build-in heeft
 
-## Learn more
 
-To learn more about developing your project with Expo, look at the following resources:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
-## Join the community
+```
+app/
+├── (tabs)/          # Gebruiker tabs (home, challenges, events, map, profile)
+├── (admin-tabs)/    # Admin tabs (dashboard, events, users, map)
+├── event/[id].tsx   # Event detail pagina
+├── login.tsx        # Login
+├── register.tsx    # Registratie
+├── report.tsx       # Afval rapporteren
+└── store.tsx        # Rewards store
 
-Join our community of developers creating universal apps.
+components/          # Herbruikbare componenten
+lib/
+├── contexts/        # React Context (Auth, Store, Theme)
+├── data/           # Statische data
+├── types.ts        # TypeScript types
+└── utils/          # Utilities (supabase client, etc.)
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## 🔌 Belangrijkste API's
+
+### Supabase RPC Functies
+
+- `sync_user_challenges()` - Sync challenge progress
+- `claim_challenge_reward()` - Claim beloning
+- `get_user_rank()` - Bereken ranking
+- `get_leaderboard()` - Top gebruikers
+
+### Database Triggers
+
+- `update_challenge_progress_on_verified_report` - Auto punten & progress update
+- `prevent_claimed_challenge_updates` - Voorkom dubbele claims
+
+## 📦 Belangrijkste Dependencies
+
+```json
+{
+  "expo": "~54.0.30",
+  "react-native": "0.81.5",
+  "expo-router": "~6.0.21",
+  "@supabase/supabase-js": "^2.89.0",
+  "nativewind": "^4.2.1",
+  "react-native-maps": "1.20.1",
+  "expo-image-picker": "~17.0.10",
+  "expo-location": "~19.0.8",
+  "@react-native-community/datetimepicker",
+  "@expo-video",
+
+}
+```
+
+## 📱 App Flows
+
+**Gebruiker**: Registratie → Rapport indienen → Admin verifieert → Punten ontvangen → Challenges voltooien → Store items kopen → Events bezoeken
+
+**Admin**: Login → Dashboard → Rapporten verifiëren → Events beheren → Gebruikers bekijken
+
+## 🏗️ Build
+
+```bash
+# Development build
+eas build --profile development --platform ios/android
+
+# Production build
+eas build --profile production --platform ios/android
+```
+
+## 📄 Licentie
+
+Academisch project - Arteveldehogeschool
+
+---
+
+**Gemaakt met ❤️ voor een schoner Gent**

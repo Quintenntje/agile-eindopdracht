@@ -21,3 +21,5 @@ With 1st place in gold, 2nd place in silver and 3rd place in bronze and the rest
 
 
  Make it so the admin user has a different navigation pages, like reports with a list of all user reports 
+
+ Make an event tab thats shows all the upcoming events add an button so that users can join or leave a event when a user joins an event add there user id to that event, make sure when you click on said event a list of all the user coming to that event wil show up and more details about that event

@@ -96,7 +96,7 @@ export default function LeaderboardScreen() {
         <View className="flex-1 items-center justify-center pt-20">
           <ActivityIndicator size="large" color={iconColor} />
           <ThemedText className="mt-4 text-zinc-500 dark:text-zinc-400">
-            Loading leaderboard...
+            Ranglijst laden...
           </ThemedText>
         </View>
       </ScreenContent>
@@ -179,10 +179,10 @@ export default function LeaderboardScreen() {
               variant="title"
               className="text-3xl font-bold text-center"
             >
-              Leaderboard
+              Ranglijst
             </ThemedText>
             <ThemedText className="mt-2 text-center text-zinc-500 dark:text-zinc-400">
-              Who is leading the race?
+              Wie leidt de race?
             </ThemedText>
           </View>
         </View>
@@ -268,7 +268,7 @@ export default function LeaderboardScreen() {
         {users.length === 0 && (
           <View className="items-center justify-center py-20 px-4">
             <ThemedText className="text-zinc-500 dark:text-zinc-400 text-center">
-              No users on the leaderboard yet. Be the first!
+              Nog geen gebruikers op de ranglijst. Wees de eerste!
             </ThemedText>
           </View>
         )}

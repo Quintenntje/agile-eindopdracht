@@ -39,10 +39,10 @@ export default function AdminUsersScreen() {
     <ScreenContent>
       <View className="mb-6 mt-20 px-4">
         <ThemedText variant="title" className="text-3xl">
-          Users
+          Gebruikers
         </ThemedText>
         <ThemedText className="text-zinc-500 dark:text-zinc-400">
-          Manage platform users
+          Beheer platform gebruikers
         </ThemedText>
       </View>
 
@@ -64,10 +64,10 @@ export default function AdminUsersScreen() {
               </View>
               <View>
                 <ThemedText className="font-plus-jakarta-sans-bold text-zinc-900 dark:text-zinc-100">
-                  {profile.full_name || "Unknown User"}
+                  {profile.full_name || "Onbekende Gebruiker"}
                 </ThemedText>
                 <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400">
-                  {profile.email || "No email"}
+                  {profile.email || "Geen e-mail"}
                 </ThemedText>
               </View>
             </View>
