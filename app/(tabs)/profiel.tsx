@@ -9,7 +9,13 @@ import {
   Settings,
 } from "lucide-react-native";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, TouchableOpacity, useColorScheme, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  TouchableOpacity,
+  useColorScheme,
+  View,
+} from "react-native";
 import { ScreenContent } from "../../components/ScreenContent";
 import { ThemedText } from "../../components/ThemedText";
 import { useAuth } from "../../lib/contexts/AuthContext";
@@ -76,8 +82,18 @@ export default function ProfileScreen() {
   );
 
   const statsConfig = [
-    { label: "Points", value: stats.points.toLocaleString(), icon: Award, color: "#f59e0b" },
-    { label: "Reports", value: stats.reports.toString(), icon: FileText, color: "#3b82f6" },
+    {
+      label: "Punten",
+      value: stats.points.toLocaleString(),
+      icon: Award,
+      color: "#f59e0b",
+    },
+    {
+      label: "Rapporten",
+      value: stats.reports.toString(),
+      icon: FileText,
+      color: "#3b82f6",
+    },
     { label: "Impact", value: stats.impact, icon: MapPin, color: "#10b981" },
   ];
 
@@ -168,12 +184,11 @@ export default function ProfileScreen() {
               Beloningen Winkel
             </ThemedText>
             <ThemedText variant="caption" className="text-theme-primary/60">
-              Thema's & coupons
+              Thema&apos;s & coupons
             </ThemedText>
           </View>
           <ChevronRight size={20} color={isDark ? "#fafafa" : "#18181b"} />
         </TouchableOpacity>
-
 
         <TouchableOpacity
           onPress={handleLogout}

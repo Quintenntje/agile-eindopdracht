@@ -102,7 +102,9 @@ export default function MapScreen() {
         className={`flex-1 items-center justify-center bg-white dark:bg-theme-secondary ${themeClass}`}
       >
         <ActivityIndicator size="large" className="color-theme-primary" />
-        <ThemedText className="mt-4 text-theme-primary">Locatie bepalen...</ThemedText>
+        <ThemedText className="mt-4 text-theme-primary">
+          Locatie bepalen...
+        </ThemedText>
       </View>
     );
   }
@@ -131,24 +133,24 @@ export default function MapScreen() {
       {isWeb ? (
         <View className="flex-1 items-center justify-center bg-white dark:bg-theme-secondary">
           <ThemedText variant="title" className="text-theme-primary mb-2">
-            Map Preview
+            Kaart Voorbeeld
           </ThemedText>
           <ThemedText className="text-theme-primary/70 text-center px-6">
-            Map view requires a native build. Please use the Expo Go app or
-            build the app to view the map.
+            Kaartweergave vereist een native build. Gebruik de Expo Go-app of
+            bouw de app om de kaart te bekijken.
           </ThemedText>
           <View className="mt-6 px-4">
             <ThemedText variant="subtitle" className="text-theme-primary mb-2">
-              Summary
+              Samenvatting
             </ThemedText>
             <ThemedText className="text-theme-primary">
-              Events: {events.length}
+              Evenementen: {events.length}
             </ThemedText>
             <ThemedText className="text-theme-primary">
-              Reports: {reports.length}
+              Rapporten: {reports.length}
             </ThemedText>
             <ThemedText className="text-theme-primary">
-              Bins: {TRASH_BINS.length}
+              Prullenbakken: {TRASH_BINS.length}
             </ThemedText>
           </View>
         </View>

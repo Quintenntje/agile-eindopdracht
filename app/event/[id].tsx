@@ -125,14 +125,17 @@ export default function EventDetailsScreen() {
         if (error) throw error;
         setIsJoined(false);
         setParticipants((prev) => prev.filter((p) => p.user_id !== user.id));
-        Alert.alert("Success", "You have left the event.");
+        Alert.alert("Succes", "Je hebt het evenement verlaten.");
       } else {
         // Join logic
         if (
           event.max_participants &&
           participants.length >= event.max_participants
         ) {
-          Alert.alert("Vol", "Dit evenement heeft het maximum aantal deelnemers bereikt.");
+          Alert.alert(
+            "Vol",
+            "Dit evenement heeft het maximum aantal deelnemers bereikt."
+          );
           return;
         }
 
@@ -145,7 +148,7 @@ export default function EventDetailsScreen() {
         if (error) {
           if (error.code === "23505") {
             // Unique constraint violation
-            Alert.alert("Info", "You are already registered.");
+            Alert.alert("Info", "Je bent al geregistreerd.");
             setIsJoined(true);
           } else {
             throw error;
@@ -160,7 +163,7 @@ export default function EventDetailsScreen() {
       }
     } catch (error) {
       console.error("Error joining/leaving:", error);
-      Alert.alert("Error", "Failed to update participation.");
+      Alert.alert("Fout", "Bijwerken van deelname mislukt.");
     } finally {
       setActionLoading(false);
     }
@@ -169,7 +172,7 @@ export default function EventDetailsScreen() {
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Check out this event: ${event?.title} at ${event?.location_name}`,
+        message: `Bekijk dit evenement: ${event?.title} op ${event?.location_name}`,
       });
     } catch (error) {
       console.error(error);
@@ -178,16 +181,25 @@ export default function EventDetailsScreen() {
 
   if (loading) {
     return (
-      <View className={`flex-1 bg-white dark:bg-theme-secondary items-center justify-center ${themeClass}`}>
-        <ActivityIndicator size="large" color={isDark ? "#96CA64" : "#96CA64"} />
+      <View
+        className={`flex-1 bg-white dark:bg-theme-secondary items-center justify-center ${themeClass}`}
+      >
+        <ActivityIndicator
+          size="large"
+          color={isDark ? "#96CA64" : "#96CA64"}
+        />
       </View>
     );
   }
 
   if (!event) {
     return (
-      <View className={`flex-1 bg-white dark:bg-theme-secondary items-center justify-center ${themeClass}`}>
-        <ThemedText variant="title" className="text-theme-primary">Event not found</ThemedText>
+      <View
+        className={`flex-1 bg-white dark:bg-theme-secondary items-center justify-center ${themeClass}`}
+      >
+        <ThemedText variant="title" className="text-theme-primary">
+          Evenement niet gevonden
+        </ThemedText>
       </View>
     );
   }
@@ -197,7 +209,9 @@ export default function EventDetailsScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <View className={`absolute top-0 left-0 right-0 z-10 flex-row justify-between items-center px-4 pt-14 pb-4 bg-white dark:bg-theme-secondary border-b border-theme-secondary dark:border-theme-primary/10 ${themeClass}`}>
+      <View
+        className={`absolute top-0 left-0 right-0 z-10 flex-row justify-between items-center px-4 pt-14 pb-4 bg-white dark:bg-theme-secondary border-b border-theme-secondary dark:border-theme-primary/10 ${themeClass}`}
+      >
         <TouchableOpacity
           onPress={() => router.back()}
           className="w-10 h-10 bg-theme-secondary dark:bg-theme-primary/20 rounded-full items-center justify-center"
@@ -268,11 +282,11 @@ export default function EventDetailsScreen() {
           {/* Participants */}
           <View className="flex-row items-center justify-between mb-4">
             <ThemedText variant="subtitle" className="text-theme-primary">
-              Participants ({participants.length})
+              Deelnemers ({participants.length})
             </ThemedText>
             {event.max_participants && (
               <ThemedText className="text-theme-primary/60 dark:text-theme-primary/50 text-sm">
-                Max {event.max_participants}
+                Max. {event.max_participants}
               </ThemedText>
             )}
           </View>
@@ -287,18 +301,20 @@ export default function EventDetailsScreen() {
           ) : (
             <View className="gap-3 mb-8">
               {participants.map((p) => {
-                const displayName = p.profiles.full_name || 
-                  (p.profiles.first_name && p.profiles.last_name 
-                    ? `${p.profiles.first_name} ${p.profiles.last_name}` 
-                    :                       p.profiles.first_name || 
-                      p.profiles.last_name || 
+                const displayName =
+                  p.profiles.full_name ||
+                  (p.profiles.first_name && p.profiles.last_name
+                    ? `${p.profiles.first_name} ${p.profiles.last_name}`
+                    : p.profiles.first_name ||
+                      p.profiles.last_name ||
                       "Onbekende Gebruiker");
-                const initials = displayName
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")
-                  .toUpperCase()
-                  .slice(0, 2) || "?";
+                const initials =
+                  displayName
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()
+                    .slice(0, 2) || "?";
 
                 return (
                   <View
@@ -322,7 +338,8 @@ export default function EventDetailsScreen() {
                         {displayName}
                       </ThemedText>
                       <ThemedText className="text-xs text-theme-primary/60 dark:text-theme-primary/50">
-                        Joined {new Date(p.joined_at).toLocaleDateString()}
+                        Meegedaan op{" "}
+                        {new Date(p.joined_at).toLocaleDateString()}
                       </ThemedText>
                     </View>
                   </View>
@@ -334,7 +351,9 @@ export default function EventDetailsScreen() {
       </ScreenContent>
 
       {/* Footer Action */}
-      <View className={`absolute bottom-0 left-0 right-0 p-5 bg-white dark:bg-theme-secondary border-t border-theme-secondary dark:border-theme-primary/10 ${themeClass}`}>
+      <View
+        className={`absolute bottom-0 left-0 right-0 p-5 bg-white dark:bg-theme-secondary border-t border-theme-secondary dark:border-theme-primary/10 ${themeClass}`}
+      >
         <TouchableOpacity
           onPress={handleJoinLeave}
           disabled={actionLoading}
@@ -346,9 +365,9 @@ export default function EventDetailsScreen() {
           activeOpacity={0.8}
         >
           {actionLoading ? (
-            <ActivityIndicator 
-              size="small" 
-              color={isJoined ? "#ef4444" : (isDark ? "#1a2f2b" : "#f2f9f6")} 
+            <ActivityIndicator
+              size="small"
+              color={isJoined ? "#ef4444" : isDark ? "#1a2f2b" : "#f2f9f6"}
             />
           ) : (
             <>
@@ -357,7 +376,9 @@ export default function EventDetailsScreen() {
                   Verlaat Evenement
                 </ThemedText>
               ) : (
-                <ThemedText className={`font-plus-jakarta-sans-bold ${isDark ? "text-theme-secondary" : "text-theme-secondary-fg"}`}>
+                <ThemedText
+                  className={`font-plus-jakarta-sans-bold ${isDark ? "text-theme-secondary" : "text-theme-secondary-fg"}`}
+                >
                   Doe Mee
                 </ThemedText>
               )}

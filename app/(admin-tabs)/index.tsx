@@ -147,7 +147,7 @@ export default function AdminReportsScreen() {
       );
     } catch (error) {
       console.error(`Error updating report ${id}:`, error);
-      alert("Failed to update status");
+      alert("Status bijwerken mislukt");
     }
   };
 
@@ -247,7 +247,7 @@ export default function AdminReportsScreen() {
           {/* After Image */}
           <View className="flex-1">
             <ThemedText className="text-xs mb-2 font-plus-jakarta-sans-bold text-emerald-600 dark:text-emerald-400 uppercase">
-              After
+              Na
             </ThemedText>
             <TouchableOpacity
               onPress={() => openMediaViewer(report.after_image!, "image")}
@@ -305,10 +305,10 @@ export default function AdminReportsScreen() {
       <View className="flex-row items-center justify-between mb-8 mt-20 px-4">
         <View>
           <ThemedText variant="title" className="text-3xl mb-2">
-            Reports
+            Rapporten
           </ThemedText>
           <ThemedText className="text-zinc-500 dark:text-zinc-400 text-base">
-            Verify community submissions
+            Verifieer community inzendingen
           </ThemedText>
         </View>
         <TouchableOpacity
@@ -323,9 +323,9 @@ export default function AdminReportsScreen() {
       </View>
 
       <View className="flex-row mb-8">
-        <TabButton title="Pending" status="pending" />
-        <TabButton title="Verified" status="verified" />
-        <TabButton title="Declined" status="rejected" />
+        <TabButton title="In afwachting" status="pending" />
+        <TabButton title="Geverifieerd" status="verified" />
+        <TabButton title="Afgewezen" status="rejected" />
       </View>
 
       <ScrollView
@@ -346,7 +346,13 @@ export default function AdminReportsScreen() {
               <ClipboardList size={32} color={isDark ? "#71717a" : "#9ca3af"} />
             </View>
             <ThemedText className="text-zinc-500 font-plus-jakarta-sans-medium">
-              Geen {activeTab === "pending" ? "in afwachting" : activeTab === "verified" ? "geverifieerde" : "afgewezen"} rapporten gevonden
+              Geen{" "}
+              {activeTab === "pending"
+                ? "in afwachting"
+                : activeTab === "verified"
+                  ? "geverifieerde"
+                  : "afgewezen"}{" "}
+              rapporten gevonden
             </ThemedText>
           </View>
         ) : (
@@ -412,7 +418,7 @@ export default function AdminReportsScreen() {
                       >
                         <Check size={18} color="#10b981" />
                         <ThemedText className="font-plus-jakarta-sans-bold text-emerald-700 dark:text-emerald-400">
-                          Verify
+                          Bevestigen
                         </ThemedText>
                       </TouchableOpacity>
                       <TouchableOpacity

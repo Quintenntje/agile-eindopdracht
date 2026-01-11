@@ -46,7 +46,9 @@
       ],
       "expo-sqlite",
       "expo-secure-store",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "expo-video",
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,

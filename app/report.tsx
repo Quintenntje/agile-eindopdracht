@@ -17,12 +17,28 @@ import { ThemedText } from "../components/ThemedText";
 import { useAuth } from "../lib/contexts/AuthContext";
 import { supabase } from "../lib/utils/supabase";
 
-import { ResizeMode, Video } from "expo-av";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
+import { useVideoPlayer, VideoView } from "expo-video";
 import { getThemeClass, useTheme } from "../lib/contexts/ThemeContext";
 
 type MediaType = "image" | "video" | null;
+
+const PreviewVideo = ({ uri }: { uri: string }) => {
+  const player = useVideoPlayer(uri, (player) => {
+    player.loop = false;
+    player.play();
+  });
+
+  return (
+    <VideoView
+      player={player}
+      style={{ width: "100%", height: "100%" }}
+      contentFit="cover"
+      nativeControls={true}
+    />
+  );
+};
 
 export default function ReportScreen() {
   const { user } = useAuth();
@@ -48,7 +64,7 @@ export default function ReportScreen() {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permission to access location was denied");
+        Alert.alert("Toegang tot locatie geweigerd");
         setLoadingLocation(false);
         return;
       }
@@ -103,7 +119,7 @@ export default function ReportScreen() {
         }
       }
     } catch {
-      Alert.alert("Error capturing media");
+      Alert.alert("Fout bij vastleggen media");
     }
   };
 
@@ -151,7 +167,7 @@ export default function ReportScreen() {
         setAfterImageUri(result.assets[0].uri);
       }
     } catch {
-      Alert.alert("Error capturing after photo");
+      Alert.alert("Fout bij vastleggen opruimfoto");
     }
   };
 
@@ -230,8 +246,8 @@ export default function ReportScreen() {
 
     if (!finalCoordinates) {
       Alert.alert(
-        "Error",
-        "Please provide a location (address or current location)"
+        "Fout",
+        "Geef een locatie op (adres of huidige locatie)"
       );
       return;
     }
@@ -243,7 +259,7 @@ export default function ReportScreen() {
         data: { session },
       } = await supabase.auth.getSession();
       if (!session) {
-        throw new Error("You must be logged in to submit a report");
+        throw new Error("Je moet ingelogd zijn om een rapport in te dienen");
       }
 
       const uploadFile = async (uri: string, type: MediaType) => {
@@ -320,7 +336,7 @@ export default function ReportScreen() {
     >
       <View className="p-4 flex-row justify-between items-center border-b border-theme-secondary dark:border-theme-primary/10 mt-8">
         <ThemedText variant="subtitle" className="text-theme-primary">
-          New Report
+          Nieuw Rapport
         </ThemedText>
         <Pressable
           onPress={() => router.back()}
@@ -343,13 +359,7 @@ export default function ReportScreen() {
           <View className="mb-6">
             <View className="w-full h-64 rounded-2xl overflow-hidden border-2 border-theme-secondary dark:border-theme-primary/20">
               {mediaType === "video" ? (
-                <Video
-                  source={{ uri: mediaUri }}
-                  style={{ width: "100%", height: "100%" }}
-                  useNativeControls
-                  resizeMode={ResizeMode.COVER}
-                  isLooping={false}
-                />
+                <PreviewVideo uri={mediaUri} />
               ) : (
                 <Image
                   source={{ uri: mediaUri }}
@@ -386,7 +396,7 @@ export default function ReportScreen() {
             >
               <Camera size={36} color={isDark ? "#96CA64" : "#96CA64"} />
               <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium text-sm">
-                Add Media
+                Media Toevoegen
               </ThemedText>
             </TouchableOpacity>
           </View>
@@ -450,7 +460,7 @@ export default function ReportScreen() {
                 >
                   <ImageIcon size={24} color={isDark ? "#96CA64" : "#96CA64"} />
                   <ThemedText className="text-theme-primary mt-2 font-plus-jakarta-sans-medium text-xs">
-                    From Library
+                    Uit Bibliotheek
                   </ThemedText>
                 </TouchableOpacity>
               </View>
@@ -492,7 +502,7 @@ export default function ReportScreen() {
               <>
                 <MapPin size={18} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
                 <ThemedText className="ml-2 font-plus-jakarta-sans-medium text-theme-primary">
-                  Use my current location
+                  Gebruik mijn huidige locatie
                 </ThemedText>
               </>
             )}
@@ -504,7 +514,7 @@ export default function ReportScreen() {
           variant="caption"
           className="mb-2 uppercase tracking-wider text-theme-primary/70"
         >
-          Details
+          Bijzonderheden
         </ThemedText>
         <Input
           value={description}

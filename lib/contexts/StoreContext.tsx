@@ -26,40 +26,40 @@ export type StoreItem = {
 export const STORE_THEMES: StoreItem[] = [
   {
     id: "default",
-    name: "Classic",
-    description: "Clean black & white theme",
+    name: "Klassiek",
+    description: "Schoon zwart-wit thema",
     price: 0,
     type: "theme",
     color: "#18181b",
   },
   {
     id: "eco",
-    name: "Eco Nature",
-    description: "Nature-inspired green theme",
+    name: "Eco Natuur",
+    description: "Op de natuur geïnspireerd groen thema",
     price: 1000,
     type: "theme",
     color: "#1a4d2e",
   },
   {
     id: "ocean",
-    name: "Ocean Blue",
-    description: "Cool ocean vibes",
+    name: "Oceaan Blauw",
+    description: "Koele oceaan vibes",
     price: 1000,
     type: "theme",
     color: "#0e7490",
   },
   {
     id: "sunset",
-    name: "Sunset Orange",
-    description: "Warm sunset colors",
+    name: "Zonsondergang Oranje",
+    description: "Warme zonsondergang kleuren",
     price: 1000,
     type: "theme",
     color: "#c2410c",
   },
   {
     id: "forest",
-    name: "Forest Green",
-    description: "Deep forest aesthetics",
+    name: "Bos Groen",
+    description: "Diepe bos esthetiek",
     price: 1000,
     type: "theme",
     color: "#15803d",
@@ -69,35 +69,35 @@ export const STORE_THEMES: StoreItem[] = [
 export const STORE_COUPONS: StoreItem[] = [
   {
     id: "coupon_delhaize_5",
-    name: "Delhaize €5 Voucher",
-    description: "€5 off your next purchase at Delhaize",
+    name: "Delhaize €5 Waardebon",
+    description: "€5 korting op je volgende aankoop bij Delhaize",
     price: 25000,
     type: "coupon",
     discount: "€5",
   },
   {
     id: "coupon_colruyt_10",
-    name: "Colruyt €10 Voucher",
-    description: "€10 off your next purchase at Colruyt",
+    name: "Colruyt €10 Waardebon",
+    description: "€10 korting op je volgende aankoop bij Colruyt",
     price: 50000,
     type: "coupon",
     discount: "€10",
   },
   {
     id: "coupon_ah_15",
-    name: "Albert Heijn €15 Voucher",
-    description: "€15 off your next purchase at Albert Heijn",
+    name: "Albert Heijn €15 Waardebon",
+    description: "€15 korting op je volgende aankoop bij Albert Heijn",
     price: 75000,
     type: "coupon",
     discount: "€15",
   },
   {
     id: "coupon_cinema_ticket",
-    name: "Kinepolis Movie Ticket",
-    description: "Free movie ticket at any Kinepolis cinema",
+    name: "Kinepolis Bioscoopkaartje",
+    description: "Gratis bioscoopkaartje bij elke Kinepolis bioscoop",
     price: 100000,
     type: "coupon",
-    discount: "Free Ticket",
+    discount: "Gratis Ticket",
   },
 ];
 
@@ -259,20 +259,20 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (!user) {
       return {
         success: false,
-        message: "You must be logged in to make purchases",
+        message: "Je moet ingelogd zijn om aankopen te doen",
       };
     }
 
     // Check if already purchased (only for themes, coupons can be bought multiple times)
     if (item.type === "theme" && isItemPurchased(item.id)) {
-      return { success: false, message: "You already own this item" };
+      return { success: false, message: "Je bezit dit item al" };
     }
 
     // Check if user has enough points
     if (!canAfford(item.price)) {
       return {
         success: false,
-        message: `Not enough points! You need ${item.price} points but only have ${userPoints} points.`,
+        message: `Niet genoeg punten! Je hebt ${item.price} punten nodig maar hebt er slechts ${userPoints}.`,
       };
     }
 
@@ -295,7 +295,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         console.error("Error updating points:", updateError);
         return {
           success: false,
-          message: "Failed to process purchase. Please try again.",
+          message: "Verwerking van aankoop mislukt. Probeer het opnieuw.",
         };
       }
 
@@ -303,7 +303,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       setUserPoints(newPoints);
 
       // Generate code for coupons
-      const couponCode = item.type === "coupon" ? generateCouponCode() : undefined;
+      const couponCode =
+        item.type === "coupon" ? generateCouponCode() : undefined;
 
       // Add to purchased items
       const newPurchase: PurchasedItem = {
@@ -321,15 +322,15 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         success: true,
         message:
           item.type === "coupon"
-            ? `Successfully redeemed ${item.name}!`
-            : `Successfully purchased ${item.name}!`,
+            ? `${item.name} succesvol ingewisseld!`
+            : `${item.name} succesvol gekocht!`,
         code: couponCode,
       };
     } catch (err) {
       console.error("Purchase error:", err);
       return {
         success: false,
-        message: "An error occurred. Please try again.",
+        message: "Er is een fout opgetreden. Probeer het opnieuw.",
       };
     }
   };

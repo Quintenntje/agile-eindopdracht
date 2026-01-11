@@ -1,11 +1,5 @@
 import { router } from "expo-router";
-import {
-  ArrowRight,
-  Calendar,
-  MapPin,
-  Ticket,
-  Users,
-} from "lucide-react-native";
+import { ArrowRight, Calendar, MapPin, Users } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -115,14 +109,14 @@ export default function EventsScreen() {
             <Users size={14} color={isDark ? "#96CA64" : "#18181b"} />
             <ThemedText className="text-xs text-theme-primary/60 dark:text-theme-primary/50">
               {event.max_participants
-                ? `Max ${event.max_participants}`
+                ? `Max. ${event.max_participants}`
                 : "Open"}
             </ThemedText>
           </View>
 
           <View className="flex-row items-center gap-1">
             <ThemedText className="text-theme-accent dark:text-theme-accent font-plus-jakarta-sans-bold text-sm">
-              View Details
+              Details Bekijken
             </ThemedText>
             <ArrowRight size={14} color={isDark ? "#96CA64" : "#96CA64"} />
           </View>
@@ -133,8 +127,13 @@ export default function EventsScreen() {
 
   if (loading) {
     return (
-      <View className={`flex-1 bg-white dark:bg-theme-secondary items-center justify-center ${themeClass}`}>
-        <ActivityIndicator size="large" color={isDark ? "#96CA64" : "#96CA64"} />
+      <View
+        className={`flex-1 bg-white dark:bg-theme-secondary items-center justify-center ${themeClass}`}
+      >
+        <ActivityIndicator
+          size="large"
+          color={isDark ? "#96CA64" : "#96CA64"}
+        />
       </View>
     );
   }
@@ -147,18 +146,13 @@ export default function EventsScreen() {
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
     >
-      <View className="flex-row items-center justify-between mb-6 mt-8">
-        <View>
-          <ThemedText variant="title" className="text-theme-primary mb-1">
-            Aankomende Evenementen
-          </ThemedText>
-          <ThemedText className="text-theme-primary/70 dark:text-theme-primary/60">
-            Doe mee met de community in actie
-          </ThemedText>
-        </View>
-        <View className="w-10 h-10 bg-theme-accent/20 dark:bg-theme-accent/30 rounded-full items-center justify-center">
-          <Ticket size={20} color={isDark ? "#96CA64" : "#96CA64"} />
-        </View>
+      <View className="mb-6 mt-8">
+        <ThemedText variant="title" className="text-theme-primary mb-1">
+          Aankomende Evenementen
+        </ThemedText>
+        <ThemedText className="text-theme-primary/70 dark:text-theme-primary/60">
+          Doe mee met de community in actie
+        </ThemedText>
       </View>
 
       {events.length === 0 ? (

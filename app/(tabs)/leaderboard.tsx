@@ -118,7 +118,7 @@ export default function LeaderboardScreen() {
             className="bg-zinc-900 dark:bg-zinc-100 px-6 py-3 rounded-full"
           >
             <ThemedText className="text-white dark:text-zinc-900 font-semibold">
-              Retry
+              Opnieuw proberen
             </ThemedText>
           </TouchableOpacity>
         </View>
@@ -303,7 +303,7 @@ export default function LeaderboardScreen() {
                 </View>
                 <View className="flex-row items-center bg-zinc-200 dark:bg-zinc-800 px-3 py-1 rounded-full">
                   <ThemedText className="font-bold text-sm">
-                    {user.score} pts
+                    {user.score} ptn
                   </ThemedText>
                 </View>
               </View>

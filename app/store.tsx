@@ -1,11 +1,18 @@
 import * as Clipboard from "expo-clipboard";
 import { router, useFocusEffect } from "expo-router";
-import { Check, Copy, Gift, Lock, Palette, Ticket, X } from "lucide-react-native";
+import {
+  Check,
+  Copy,
+  Gift,
+  Lock,
+  Palette,
+  Ticket,
+  X,
+} from "lucide-react-native";
 import { useCallback } from "react";
 import {
   ActivityIndicator,
   Alert,
-  ScrollView,
   TouchableOpacity,
   useColorScheme,
   View,
@@ -57,8 +64,8 @@ export default function StoreScreen() {
     // Check if user can afford
     if (!canAfford(item.price)) {
       Alert.alert(
-        "Not Enough Points",
-        `You need ${item.price} points but only have ${userPoints} points.\n\nKeep reporting trash to earn more points!`,
+        "Onvoldoende Punten",
+        `Je hebt ${item.price} punten nodig maar hebt er slechts ${userPoints}.\n\nBlijf afval rapporteren om meer punten te verdienen!`,
         [{ text: "OK" }]
       );
       return;
@@ -94,8 +101,8 @@ export default function StoreScreen() {
     // Check if user can afford
     if (!canAfford(item.price)) {
       Alert.alert(
-        "Not Enough Points",
-        `You need ${item.price.toLocaleString()} points but only have ${userPoints.toLocaleString()} points.\n\nKeep reporting trash to earn more points!`,
+        "Onvoldoende Punten",
+        `Je hebt ${item.price.toLocaleString()} punten nodig maar hebt er slechts ${userPoints.toLocaleString()}.\n\nBlijf afval rapporteren om meer punten te verdienen!`,
         [{ text: "OK" }]
       );
       return;
@@ -132,12 +139,12 @@ export default function StoreScreen() {
   };
 
   const showCouponCode = (code: string, name: string) => {
-    Alert.alert(name, `Your coupon code:\n\n${code}`, [
+    Alert.alert(name, `Je couponcode:\n\n${code}`, [
       {
-        text: "Copy Code",
+        text: "Code Kopiëren",
         onPress: () => {
           Clipboard.setStringAsync(code);
-          Alert.alert("Copied!", "Code copied to clipboard");
+          Alert.alert("Gekopieerd!", "Code naar klembord gekopieerd");
         },
       },
       { text: "OK" },
@@ -146,9 +153,7 @@ export default function StoreScreen() {
 
   if (loading) {
     return (
-      <View
-        className="flex-1 items-center justify-center bg-white dark:bg-theme-secondary"
-      >
+      <View className="flex-1 items-center justify-center bg-white dark:bg-theme-secondary">
         <ActivityIndicator size="large" className="color-theme-primary" />
         <ThemedText className="mt-4 text-theme-primary">
           Winkel laden...
@@ -182,10 +187,10 @@ export default function StoreScreen() {
       <View className="mx-6 mt-4 p-4 bg-theme-primary/10 dark:bg-theme-primary/20 rounded-2xl flex-row items-center justify-between">
         <View>
           <ThemedText className="text-theme-primary/70 text-sm">
-            Your Balance
+            Jouw Saldo
           </ThemedText>
           <ThemedText variant="title" className="text-theme-primary text-2xl">
-            {userPoints.toLocaleString()} pts
+            {userPoints.toLocaleString()} ptn
           </ThemedText>
         </View>
         <TouchableOpacity
@@ -203,11 +208,11 @@ export default function StoreScreen() {
         <View className="flex-row items-center gap-2 mb-4">
           <Palette size={20} color={isDark ? "#f2f9f6" : "#1a4d2e"} />
           <ThemedText variant="subtitle" className="text-theme-primary">
-            Themes
+            Thema&apos;s
           </ThemedText>
         </View>
         <ThemedText className="mb-4 text-theme-primary/70 text-sm">
-          Customize your app appearance with unique color themes.
+          Pas het uiterlijk van je app aan met unieke kleurthema&apos;s.
         </ThemedText>
 
         <View className="gap-3 mb-8">
@@ -266,11 +271,11 @@ export default function StoreScreen() {
                         {themeOption.price}
                       </ThemedText>
                       <ThemedText className="text-theme-primary/60 text-xs">
-                        points
+                        punten
                       </ThemedText>
                       {!affordable && (
                         <ThemedText className="text-red-500 text-xs ml-2">
-                          (need {themeOption.price - userPoints} more)
+                          (nog {themeOption.price - userPoints} nodig)
                         </ThemedText>
                       )}
                     </View>
@@ -368,12 +373,12 @@ export default function StoreScreen() {
                         {coupon.price.toLocaleString()}
                       </ThemedText>
                       <ThemedText className="text-theme-primary/60 text-xs">
-                        points
+                        punten
                       </ThemedText>
                       {!affordable && (
                         <ThemedText className="text-red-500 text-xs ml-2">
-                          (need {(coupon.price - userPoints).toLocaleString()}{" "}
-                          more)
+                          (nog {(coupon.price - userPoints).toLocaleString()}{" "}
+                          nodig)
                         </ThemedText>
                       )}
                     </View>
@@ -446,7 +451,6 @@ export default function StoreScreen() {
             </View>
           </>
         )}
-
       </View>
     </ScreenContent>
   );

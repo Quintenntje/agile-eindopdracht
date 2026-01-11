@@ -48,7 +48,7 @@ export default function CreateEventScreen() {
     try {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permission to access location was denied");
+        Alert.alert("Toegang tot locatie geweigerd");
         setLoadingLocation(false);
         return;
       }
@@ -77,23 +77,23 @@ export default function CreateEventScreen() {
         }));
       }
     } catch {
-      Alert.alert("Error fetching location");
+      Alert.alert("Fout bij ophalen locatie");
     } finally {
       setLoadingLocation(false);
     }
   };
 
   const validateForm = () => {
-    if (!form.title.trim()) return "Title is required";
-    if (!form.location_name.trim()) return "Location name is required";
+    if (!form.title.trim()) return "Titel is verplicht";
+    if (!form.location_name.trim()) return "Locatienaam is verplicht";
 
     // Date must be valid and future
-    if (date < new Date()) return "Event date must be in the future";
+    if (date < new Date()) return "Evenementdatum moet in de toekomst liggen";
 
     if (form.lat && isNaN(parseFloat(form.lat)))
-      return "Latitude must be a number";
+      return "Breedtegraad moet een getal zijn";
     if (form.long && isNaN(parseFloat(form.long)))
-      return "Longitude must be a number";
+      return "Lengtegraad moet een getal zijn";
 
     return null;
   };
@@ -101,12 +101,12 @@ export default function CreateEventScreen() {
   const handleSubmit = async () => {
     const error = validateForm();
     if (error) {
-      Alert.alert("Validation Error", error);
+      Alert.alert("Validatiefout", error);
       return;
     }
 
     if (!user) {
-      Alert.alert("Error", "You must be logged in");
+      Alert.alert("Fout", "Je moet ingelogd zijn");
       return;
     }
 
@@ -123,13 +123,13 @@ export default function CreateEventScreen() {
             finalLat = geocoded[0].latitude;
             finalLong = geocoded[0].longitude;
           } else {
-            throw new Error("Could not find location from address");
+            throw new Error("Kon locatie niet vinden op basis van adres");
           }
         } catch (e) {
           console.error("Geocoding error:", e);
           Alert.alert(
-            "Error",
-            "Could not find coordinates for this address. Please try 'Use my current location' or enter coordinates manually."
+            "Fout",
+            "Kon geen coördinaten vinden voor dit adres. Probeer 'Gebruik mijn huidige locatie' of voer coördinaten handmatig in."
           );
           setLoading(false);
           return;
@@ -152,12 +152,12 @@ export default function CreateEventScreen() {
 
       if (dbError) throw dbError;
 
-      Alert.alert("Success", "Event created successfully", [
+      Alert.alert("Succes", "Evenement succesvol aangemaakt", [
         { text: "OK", onPress: () => router.back() },
       ]);
     } catch (err) {
       console.error("Error creating event:", err);
-      Alert.alert("Error", "Failed to create event");
+      Alert.alert("Fout", "Evenement aanmaken mislukt");
     } finally {
       setLoading(false);
     }
@@ -209,7 +209,7 @@ export default function CreateEventScreen() {
           >
             <ArrowLeft size={20} color={isDark ? "#ffffff" : "#000000"} />
           </TouchableOpacity>
-          <ThemedText variant="subtitle">Create Event</ThemedText>
+          <ThemedText variant="subtitle">Evenement Aanmaken</ThemedText>
           <View className="w-10" />
         </View>
 
@@ -218,11 +218,11 @@ export default function CreateEventScreen() {
             {/* Title */}
             <View>
               <ThemedText className="mb-2 font-plus-jakarta-sans-bold">
-                Title *
+                Titel *
               </ThemedText>
               <TextInput
                 className="bg-zinc-50 dark:bg-zinc-800 p-4 rounded-xl font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-100"
-                placeholder="Community Cleanup"
+                placeholder="Opruimactie"
                 placeholderTextColor={isDark ? "#71717a" : "#a1a1aa"}
                 value={form.title}
                 onChangeText={(text) => handleChange("title", text)}
@@ -232,11 +232,11 @@ export default function CreateEventScreen() {
             {/* Description */}
             <View>
               <ThemedText className="mb-2 font-plus-jakarta-sans-bold">
-                Description
+                Beschrijving
               </ThemedText>
               <TextInput
                 className="bg-zinc-50 dark:bg-zinc-800 p-4 rounded-xl font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-100 min-h-[100px]"
-                placeholder="Details about the event..."
+                placeholder="Details over het evenement..."
                 placeholderTextColor={isDark ? "#71717a" : "#a1a1aa"}
                 multiline
                 textAlignVertical="top"
@@ -248,7 +248,7 @@ export default function CreateEventScreen() {
             {/* Location Section */}
             <View>
               <ThemedText className="mb-2 font-plus-jakarta-sans-bold">
-                Location *
+                Locatie *
               </ThemedText>
 
               <TextInput
@@ -276,7 +276,7 @@ export default function CreateEventScreen() {
                   <>
                     <MapPin size={18} color={isDark ? "#e8f3ee" : "#1a4d2e"} />
                     <ThemedText className="ml-2 font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-100">
-                      Use my current location
+                      Gebruik mijn huidige locatie
                     </ThemedText>
                   </>
                 )}
@@ -287,7 +287,7 @@ export default function CreateEventScreen() {
             <View className="flex-row gap-4">
               <View className="flex-1">
                 <ThemedText className="mb-2 font-plus-jakarta-sans-bold">
-                  Latitude
+                  Breedtegraad
                 </ThemedText>
                 <TextInput
                   className="bg-zinc-50 dark:bg-zinc-800 p-4 rounded-xl font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-100"
@@ -300,7 +300,7 @@ export default function CreateEventScreen() {
               </View>
               <View className="flex-1">
                 <ThemedText className="mb-2 font-plus-jakarta-sans-bold">
-                  Longitude
+                  Lengtegraad
                 </ThemedText>
                 <TextInput
                   className="bg-zinc-50 dark:bg-zinc-800 p-4 rounded-xl font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-100"
@@ -316,7 +316,7 @@ export default function CreateEventScreen() {
             {/* Date & Time Picker */}
             <View>
               <ThemedText className="mb-2 font-plus-jakarta-sans-bold">
-                Date & Time *
+                Datum & Tijd *
               </ThemedText>
 
               <View className="flex-row gap-3">
@@ -372,7 +372,7 @@ export default function CreateEventScreen() {
             {/* Max Participants */}
             <View>
               <ThemedText className="mb-2 font-plus-jakarta-sans-bold">
-                Max Participants (Optional)
+                Max. Deelnemers (Optioneel)
               </ThemedText>
               <TextInput
                 className="bg-zinc-50 dark:bg-zinc-800 p-4 rounded-xl font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-100"
@@ -396,7 +396,7 @@ export default function CreateEventScreen() {
                 <>
                   <Save size={20} color="#ffffff" />
                   <ThemedText className="text-white font-plus-jakarta-sans-bold text-lg">
-                    Create Event
+                    Evenement Aanmaken
                   </ThemedText>
                 </>
               )}

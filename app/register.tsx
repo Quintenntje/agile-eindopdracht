@@ -30,17 +30,17 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert("Fout", "Vul alle velden in");
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert("Error", "Passwords do not match");
+      Alert.alert("Fout", "Wachtwoorden komen niet overeen");
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert("Error", "Password must be at least 6 characters");
+      Alert.alert("Fout", "Wachtwoord moet minstens 6 tekens bevatten");
       return;
     }
 
@@ -124,7 +124,7 @@ export default function RegisterScreen() {
               </View>
               <View className="flex-1">
                 <Input
-                  label="Last Name"
+                  label="Achternaam"
                   placeholder="Doe"
                   value={lastName}
                   onChangeText={setLastName}
@@ -141,7 +141,7 @@ export default function RegisterScreen() {
               autoCapitalize="none"
             />
             <Input
-              label="Password"
+              label="Wachtwoord"
               placeholder="••••••••"
               value={password}
               onChangeText={setPassword}
@@ -156,7 +156,7 @@ export default function RegisterScreen() {
             />
 
             <Button
-              label="Sign Up"
+              label="Registreren"
               onPress={handleRegister}
               isLoading={isLoading}
               className="mt-2"

@@ -126,7 +126,7 @@ export default function HomeScreen() {
               </View>
             )}
             <ThemedText className="text-theme-primary/70 text-lg">
-              Welcome back,
+              Welkom terug,
             </ThemedText>
             <ThemedText
               variant="title"
@@ -162,12 +162,12 @@ export default function HomeScreen() {
               {loading ? "..." : stats.points.toLocaleString()}
             </ThemedText>
             <ThemedText className="text-zinc-500 dark:text-zinc-400 font-plus-jakarta-sans-medium">
-              pts
+              ptn
             </ThemedText>
           </View>
           <View className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-700 flex-row justify-between items-center">
             <ThemedText className="text-zinc-500 dark:text-zinc-400 text-sm">
-              Rank:{" "}
+              Rang:{" "}
               <ThemedText className="text-zinc-900 dark:text-white font-plus-jakarta-sans-bold">
                 #{loading ? "..." : stats.rank}
               </ThemedText>
@@ -177,7 +177,7 @@ export default function HomeScreen() {
               className="bg-zinc-100 dark:bg-zinc-700 px-3 py-1.5 rounded-full"
             >
               <ThemedText className="text-zinc-900 dark:text-white text-xs font-plus-jakarta-sans-bold">
-                View Leaderboard
+                Ranglijst Bekijken
               </ThemedText>
             </TouchableOpacity>
           </View>
@@ -222,11 +222,13 @@ export default function HomeScreen() {
       {/* Upcoming Events Section */}
       <View className="px-6 mt-8">
         <View className="flex-row justify-between items-center mb-4">
-          <ThemedText variant="subtitle" className="text-theme-primary">My Upcoming Events</ThemedText>
+          <ThemedText variant="subtitle" className="text-theme-primary">
+            Mijn Evenementen
+          </ThemedText>
           {upcomingEvents.length > 0 && (
             <TouchableOpacity onPress={() => router.push("/(tabs)/events")}>
               <ThemedText className="text-theme-accent dark:text-theme-accent text-sm font-plus-jakarta-sans-bold">
-                View All
+                Alles Bekijken
               </ThemedText>
             </TouchableOpacity>
           )}
@@ -242,7 +244,7 @@ export default function HomeScreen() {
             >
               <View className="w-12 h-12 bg-theme-accent/10 dark:bg-theme-accent/20 rounded-xl items-center justify-center mr-3 border border-theme-accent/20 dark:border-theme-accent/30">
                 <ThemedText className="text-xs font-plus-jakarta-sans-bold text-theme-accent dark:text-theme-accent uppercase">
-                  {new Date(event.event_date).toLocaleDateString(undefined, {
+                  {new Date(event.event_date).toLocaleDateString("nl-NL", {
                     month: "short",
                   })}
                 </ThemedText>
@@ -262,7 +264,7 @@ export default function HomeScreen() {
                     className="text-xs text-theme-primary/70 dark:text-theme-primary/60 flex-1"
                     numberOfLines={1}
                   >
-                    {new Date(event.event_date).toLocaleTimeString([], {
+                    {new Date(event.event_date).toLocaleTimeString("nl-NL", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}{" "}
@@ -297,9 +299,9 @@ export default function HomeScreen() {
       {/* Pending Reports Section */}
       <View className="px-6 mt-8 mb-8">
         <View className="flex-row justify-between items-center mb-4">
-          <ThemedText variant="subtitle">In Afwachting Rapporten</ThemedText>
+          <ThemedText variant="subtitle">Rapporten in Afwachting</ThemedText>
           <ThemedText className="text-zinc-500 dark:text-zinc-400 text-sm">
-            {pendingReports.length} In afwachting
+            {pendingReports.length} in afwachting
           </ThemedText>
         </View>
 
@@ -317,15 +319,18 @@ export default function HomeScreen() {
                   className="font-plus-jakarta-sans-medium text-zinc-900 dark:text-zinc-50"
                   numberOfLines={1}
                 >
-                  {report.location_name || report.description || "Afval Rapport"}
+                  {report.location_name ||
+                    report.description ||
+                    "Afval Rapport"}
                 </ThemedText>
                 <ThemedText className="text-xs text-zinc-500 dark:text-zinc-400">
-                  {new Date(report.created_at).toLocaleDateString()} • In afwachting van verificatie
+                  {new Date(report.created_at).toLocaleDateString("nl-NL")} • In
+                  afwachting van verificatie
                 </ThemedText>
               </View>
               <View className="bg-amber-100 dark:bg-amber-900/30 px-2 py-1 rounded">
                 <ThemedText className="text-xs font-plus-jakarta-sans-bold text-amber-700 dark:text-amber-500">
-                  Pending
+                  In afwachting
                 </ThemedText>
               </View>
             </View>

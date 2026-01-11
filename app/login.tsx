@@ -27,7 +27,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert("Fout", "Vul alle velden in");
       return;
     }
 
@@ -81,7 +81,7 @@ export default function LoginScreen() {
               autoCapitalize="none"
             />
             <Input
-              label="Password"
+              label="Wachtwoord"
               placeholder="••••••••"
               value={password}
               onChangeText={setPassword}
@@ -97,10 +97,10 @@ export default function LoginScreen() {
 
           <View className="flex-row justify-center mt-4">
             <ThemedText className="text-zinc-500 dark:text-zinc-400 mr-1">
-              Don&apos;t have an account?
+              Nog geen account?
             </ThemedText>
             <Link href="/register" asChild>
-              <ThemedText variant="link">Sign Up</ThemedText>
+              <ThemedText variant="link">Registreren</ThemedText>
             </Link>
           </View>
         </View>

@@ -117,7 +117,10 @@ export default function ChallengesScreen() {
     }
 
     if (data?.success) {
-      Alert.alert("Beloning Geclaimd!", `Je hebt ${data.points_awarded} punten verdiend!`);
+      Alert.alert(
+        "Beloning Geclaimd!",
+        `Je hebt ${data.points_awarded} punten verdiend!`
+      );
       fetchChallenges();
     } else {
       Alert.alert("Fout", data?.error || "Beloning claimen mislukt");
@@ -163,10 +166,10 @@ export default function ChallengesScreen() {
       }
     >
       <ThemedText variant="title" className="mb-2 mt-8 text-theme-primary">
-        Challenges
+        Uitdagingen
       </ThemedText>
       <ThemedText variant="body" className="mb-4 text-theme-primary/70">
-        Complete challenges to earn points and rewards.
+        Voltooi uitdagingen om punten en beloningen te verdienen.
       </ThemedText>
 
       {/* Filter Buttons */}
@@ -212,12 +215,12 @@ export default function ChallengesScreen() {
       )}
 
       <ThemedText variant="subtitle" className="mb-4 mt-2">
-        Active ({activeChallenges.length})
+        Actief ({activeChallenges.length})
       </ThemedText>
 
       {activeChallenges.length === 0 ? (
         <ThemedText variant="body" className="text-theme-primary/50 mb-4">
-          No active challenges available.
+          Geen actieve uitdagingen beschikbaar.
         </ThemedText>
       ) : (
         activeChallenges.map((challenge) => (

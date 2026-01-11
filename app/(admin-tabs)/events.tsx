@@ -51,12 +51,12 @@ export default function AdminEventsScreen() {
 
   const handleDelete = (id: string) => {
     Alert.alert(
-      "Delete Event",
-      "Are you sure you want to delete this event? This action cannot be undone.",
+      "Evenement Verwijderen",
+      "Weet je zeker dat je dit evenement wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
       [
-        { text: "Cancel", style: "cancel" },
+        { text: "Annuleren", style: "cancel" },
         {
-          text: "Delete",
+          text: "Verwijderen",
           style: "destructive",
           onPress: async () => {
             try {
@@ -67,10 +67,10 @@ export default function AdminEventsScreen() {
 
               if (error) throw error;
               setEvents((prev) => prev.filter((e) => e.id !== id));
-              Alert.alert("Success", "Event deleted successfully");
+              Alert.alert("Succes", "Evenement succesvol verwijderd");
             } catch (error) {
               console.error("Error deleting event:", error);
-              Alert.alert("Error", "Failed to delete event");
+              Alert.alert("Fout", "Evenement verwijderen mislukt");
             }
           },
         },
