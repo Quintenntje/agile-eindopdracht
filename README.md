@@ -37,7 +37,7 @@ Een gamified mobiele applicatie voor het rapporteren en opruimen van zwerfafval 
 # Dependencies installeren
 npm install
 
-# Environment variabelen configureren (.env)
+# Environment variabelen configureren (.env.local)
 EXPO_PUBLIC_SUPABASE_URL=https://kkmrvkdpmaroppcsctgn.supabase.co
 EXPO_PUBLIC_SUPABASE_KEY=sb_publishable_5OQAuZmBji6EAqYhcj5QCA_iomAsYUV
 
