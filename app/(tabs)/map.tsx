@@ -31,7 +31,6 @@ export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null
   );
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [reports, setReports] = useState<TrashReport[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
@@ -45,14 +44,16 @@ export default function MapScreen() {
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Toegang tot locatie geweigerd");
-        setLoading(false);
-        return;
+      if (status === "granted") {
+        try {
+          let location = await Location.getCurrentPositionAsync({});
+          setLocation(location);
+        } catch (error) {
+          console.log("Could not get location, using default (Ghent)");
+        }
+      } else {
+        console.log("Location permission not granted, using default (Ghent)");
       }
-
-      let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
       setLoading(false);
     })();
   }, []);
@@ -96,6 +97,10 @@ export default function MapScreen() {
     }, [fetchData])
   );
 
+  // Default to Ghent coordinates if location is not available
+  const defaultLatitude = 51.0543;
+  const defaultLongitude = 3.7174;
+
   if (loading) {
     return (
       <View
@@ -103,27 +108,8 @@ export default function MapScreen() {
       >
         <ActivityIndicator size="large" className="color-theme-primary" />
         <ThemedText className="mt-4 text-theme-primary">
-          Locatie bepalen...
+          Kaart laden...
         </ThemedText>
-      </View>
-    );
-  }
-
-  if (errorMsg) {
-    return (
-      <View
-        className={`flex-1 items-center justify-center bg-white dark:bg-theme-secondary p-6 ${themeClass}`}
-      >
-        <ThemedText
-          variant="title"
-          className="mb-2 text-center text-theme-primary"
-        >
-          Locatie Vereist
-        </ThemedText>
-        <ThemedText className="text-center mb-4 text-theme-primary">
-          {errorMsg}
-        </ThemedText>
-        <Button label="Opnieuw Proberen" onPress={() => setLoading(true)} />
       </View>
     );
   }
@@ -158,11 +144,11 @@ export default function MapScreen() {
         <MapView
           style={StyleSheet.absoluteFill}
           provider={PROVIDER_GOOGLE}
-          showsUserLocation
-          showsMyLocationButton
+          showsUserLocation={!!location}
+          showsMyLocationButton={!!location}
           initialRegion={{
-            latitude: location?.coords.latitude || 51.0543,
-            longitude: location?.coords.longitude || 3.7174,
+            latitude: location?.coords.latitude || defaultLatitude,
+            longitude: location?.coords.longitude || defaultLongitude,
             latitudeDelta: 0.01,
             longitudeDelta: 0.01,
           }}

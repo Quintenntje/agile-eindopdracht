@@ -95,7 +95,7 @@ export default function ReportScreen() {
     try {
       if (type === "image") {
         const result = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          mediaTypes: ["images"],
           allowsEditing: true,
           aspect: [4, 3],
           quality: 0.5,
@@ -107,7 +107,7 @@ export default function ReportScreen() {
         }
       } else {
         const result = await ImagePicker.launchCameraAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+          mediaTypes: ["videos"],
           allowsEditing: true,
           videoMaxDuration: 30, // Max 30 seconds
           quality: 0.5,
@@ -123,13 +123,10 @@ export default function ReportScreen() {
     }
   };
 
-  const pickFromLibrary = async (type: "image" | "video") => {
+  const pickFromLibrary = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes:
-          type === "image"
-            ? ImagePicker.MediaTypeOptions.Images
-            : ImagePicker.MediaTypeOptions.Videos,
+        mediaTypes: ["images", "videos"],
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.5,
@@ -137,10 +134,12 @@ export default function ReportScreen() {
       });
 
       if (!result.canceled) {
-        setMediaUri(result.assets[0].uri);
-        setMediaType(type);
-        // Reset after image if main type changes to video (though UI hides it)
-        if (type === "video") setAfterImageUri(null);
+        const asset = result.assets[0];
+        const detectedType = asset.type === "video" ? "video" : "image";
+        setMediaUri(asset.uri);
+        setMediaType(detectedType);
+        // Reset after image if main type changes to video
+        if (detectedType === "video") setAfterImageUri(null);
       }
     } catch {
       Alert.alert("Fout bij selecteren media");
@@ -151,7 +150,7 @@ export default function ReportScreen() {
     try {
       let result;
       const options: ImagePicker.ImagePickerOptions = {
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ["images"],
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.5,
@@ -185,12 +184,8 @@ export default function ReportScreen() {
           onPress: () => pickMedia("video"),
         },
         {
-          text: "Foto Uit Bibliotheek",
-          onPress: () => pickFromLibrary("image"),
-        },
-        {
-          text: "Video Uit Bibliotheek",
-          onPress: () => pickFromLibrary("video"),
+          text: "Uit Bibliotheek",
+          onPress: () => pickFromLibrary(),
         },
         {
           text: "Annuleren",
